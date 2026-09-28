@@ -23,6 +23,10 @@ bool MagneticEncoder::begin(uint8_t sdaPin, uint8_t sclPin) {
     return true;
 }
 
+bool MagneticEncoder::detectMagnetLoss() {
+    return _as5600.magnetDetected() == false;
+}
+
 void MagneticEncoder::update() {
     // 1. Get current 0-4095 reading
     int currentRawAngle = _as5600.rawAngle();
@@ -60,6 +64,14 @@ void MagneticEncoder::setOpenPosition() {
 
 void MagneticEncoder::setClosedPosition() {
     _closedPosition = _currentAbsolutePosition;
+}
+
+long MagneticEncoder::getOpenPosition() {
+    return _openPosition;
+}
+
+long MagneticEncoder::getClosedPosition() {
+    return _closedPosition;
 }
 
 int MagneticEncoder::getPercentage() {

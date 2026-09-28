@@ -29,10 +29,14 @@ public:
     long getAbsolutePosition(); // Feeds the PID controller
     int getRawAngle();          // 0-4095 single rotation reading
 
+    bool detectMagnetLoss(); // Returns true if the magnet is too far away or misaligned
+
     // Calibration setters
     void setOpenPosition();     // Saves current position as 100% open
     void setClosedPosition();   // Saves current position as 0% closed
-    
+    long getOpenPosition();     // Returns the stored 100% open position
+    long getClosedPosition();   // Returns the stored 0% closed position
+
     // UI Getter
     int getPercentage();        // Returns 0-100 for the LCD display
 };
