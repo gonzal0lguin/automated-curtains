@@ -1,101 +1,109 @@
 #include "rotary_encoder.h"
 
-// Define a debounce delay for the mechanical button (in milliseconds)
-const unsigned long DEBOUNCE_DELAY_MS = 200;
+#include <soc/gpio_reg.h>
 
-RotaryEncoder::RotaryEncoder(uint8_t pinA, uint8_t pinB, uint8_t pinSW)
-    : _pinA(pinA), _pinB(pinB), _pinSW(pinSW), _position(0), _buttonPressed(false), _lastButtonPress(0), _lastReadClicks(0) {
+// Index = (previous AB << 2) | current AB. Valid transitions give +-1,
+// invalid ones (double jumps / bounce glitches) give 0.
+static const int8_t DRAM_ATTR kQuadTable[16] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0};
+
+// Direct register read: safe inside an IRAM ISR even while flash is busy
+// (e.g. while settings are being written to NVS).
+static inline int IRAM_ATTR fastRead(uint8_t pin) {
+    if (pin < 32) return (REG_READ(GPIO_IN_REG) >> pin) & 1;
+    return (REG_READ(GPIO_IN1_REG) >> (pin - 32)) & 1;
 }
+
+RotaryEncoder::RotaryEncoder(uint8_t pinA, uint8_t pinB, uint8_t pinSW, uint8_t transitionsPerDetent)
+    : _pinA(pinA), _pinB(pinB), _pinSW(pinSW), _perDetent(transitionsPerDetent ? transitionsPerDetent : 1) {}
 
 void RotaryEncoder::begin() {
     pinMode(_pinA, INPUT_PULLUP);
     pinMode(_pinB, INPUT_PULLUP);
     pinMode(_pinSW, INPUT_PULLUP);
-
-    // Initialize the starting state of the pins
-    _encoderState = (digitalRead(_pinA) << 1) | digitalRead(_pinB);
-
+    _state = (fastRead(_pinA) << 1) | fastRead(_pinB);
     attachInterruptArg(digitalPinToInterrupt(_pinA), isrEncoder, this, CHANGE);
     attachInterruptArg(digitalPinToInterrupt(_pinB), isrEncoder, this, CHANGE);
-    attachInterruptArg(digitalPinToInterrupt(_pinSW), isrButton, this, FALLING);
+    _stable = _lastRead = (digitalRead(_pinSW) == LOW);
+    _longFired = _stable;  // held during boot: ignore until released
 }
 
 void IRAM_ATTR RotaryEncoder::isrEncoder(void* arg) {
-    RotaryEncoder* encoder = static_cast<RotaryEncoder*>(arg);
-    
-    uint8_t stateA = digitalRead(encoder->_pinA);
-    uint8_t stateB = digitalRead(encoder->_pinB);
-
-    portENTER_CRITICAL_ISR(&(encoder->_mux));
-    
-    // Shift the old state left by 2 bits, and add the new state to the bottom 2 bits
-    encoder->_encoderState = ((encoder->_encoderState << 2) | (stateA << 1) | stateB) & 0x0F;
-
-    // State Machine Lookup Table
-    // Only increments/decrements on valid quadrature sequences, eliminating bounce.
-    if (encoder->_encoderState == 0b0001 || encoder->_encoderState == 0b0111 || 
-        encoder->_encoderState == 0b1110 || encoder->_encoderState == 0b1000) {
-        encoder->_position++; // Clockwise
-    } 
-    else if (encoder->_encoderState == 0b0010 || encoder->_encoderState == 0b1011 || 
-             encoder->_encoderState == 0b1101 || encoder->_encoderState == 0b0100) {
-        encoder->_position--; // Counter-Clockwise
-    }
-    
-    portEXIT_CRITICAL_ISR(&(encoder->_mux));
+    RotaryEncoder* self = static_cast<RotaryEncoder*>(arg);
+    uint8_t ab = (fastRead(self->_pinA) << 1) | fastRead(self->_pinB);
+    portENTER_CRITICAL_ISR(&self->_mux);
+    uint8_t idx = ((self->_state << 2) | ab) & 0x0F;
+    self->_raw = self->_raw + kQuadTable[idx];
+    self->_state = ab;
+    portEXIT_CRITICAL_ISR(&self->_mux);
 }
 
-void IRAM_ATTR RotaryEncoder::isrButton(void* arg) {
-    RotaryEncoder* encoder = static_cast<RotaryEncoder*>(arg);
-    
-    // Grab current time for debouncing
-    unsigned long currentTime = millis();
-
-    portENTER_CRITICAL_ISR(&(encoder->_mux));
-    // Check if enough time has passed since the last interrupt (debounce)
-    if ((currentTime - encoder->_lastButtonPress) > DEBOUNCE_DELAY_MS) {
-        encoder->_buttonPressed = true;
-        encoder->_lastButtonPress = currentTime;
-    }
-    portEXIT_CRITICAL_ISR(&(encoder->_mux));
-}
-
-// --- UI Access Methods ---
-
-int RotaryEncoder::getPosition() {
-    int pos;
-    portENTER_CRITICAL(&(this->_mux));
-    // Divide raw pulses by 2 to get actual physical detent clicks
-    pos = _position / 2; 
-    portEXIT_CRITICAL(&(this->_mux));
-    return pos;
+long RotaryEncoder::getRawCount() {
+    portENTER_CRITICAL(&_mux);
+    long r = _raw;
+    portEXIT_CRITICAL(&_mux);
+    return r;
 }
 
 int RotaryEncoder::getDelta() {
-    int delta = 0;
-    portENTER_CRITICAL(&(this->_mux));
-    
-    // Calculate total physical clicks made so far
-    int currentClicks = _position / 2; 
-    
-    // The delta is just the difference between now and our last check
-    delta = currentClicks - _lastReadClicks;
-    
-    // Save the current state for the NEXT time getDelta() is called
-    _lastReadClicks = currentClicks; 
-    
-    portEXIT_CRITICAL(&(this->_mux));
-    return delta;
+    int32_t raw = getRawCount();
+    // Truncation toward zero gives natural hysteresis: a contact resting on
+    // the edge between two counts cannot generate +1/-1 jitter.
+    int32_t detents = (raw - _consumedRaw) / _perDetent;
+    _consumedRaw += detents * _perDetent;
+    if (_reversed) detents = -detents;
+    _position += detents;
+    return detents;
+}
+
+int RotaryEncoder::getPosition() {
+    getDelta();
+    return _position;
+}
+
+void RotaryEncoder::tick() {
+    uint32_t now = millis();
+    bool pressed = digitalRead(_pinSW) == LOW;
+    if (pressed != _lastRead) {
+        _lastRead = pressed;
+        _changedAt = now;
+    }
+    if (pressed != _stable && now - _changedAt >= _debounceMs) {
+        _stable = pressed;
+        if (pressed) {
+            _pressedAt = now;
+            _longFired = false;
+        } else if (!_longFired) {
+            pushEvent(Event::Click);
+        }
+    }
+    if (_stable && !_longFired && now - _pressedAt >= _longPressMs) {
+        _longFired = true;
+        pushEvent(Event::LongPress);
+    }
+}
+
+void RotaryEncoder::pushEvent(Event e) {
+    if (_qLen == sizeof(_queue) / sizeof(_queue[0])) return;  // drop when full
+    _queue[(_qHead + _qLen) % 4] = e;
+    _qLen++;
+}
+
+RotaryEncoder::Event RotaryEncoder::getEvent() {
+    if (!_qLen) return Event::None;
+    Event e = _queue[_qHead];
+    _qHead = (_qHead + 1) % 4;
+    _qLen--;
+    return e;
 }
 
 bool RotaryEncoder::isClicked() {
-    bool clicked = false;
-    portENTER_CRITICAL(&(this->_mux));
-    // If pressed, register it and immediately clear the flag (consume the click)
-    if (_buttonPressed) {
-        clicked = true;
-        _buttonPressed = false;
+    for (uint8_t i = 0; i < _qLen; i++) {
+        if (_queue[(_qHead + i) % 4] == Event::Click) {
+            // remove that event, keep order of others
+            for (uint8_t j = i; j + 1 < _qLen; j++) _queue[(_qHead + j) % 4] = _queue[(_qHead + j + 1) % 4];
+            _qLen--;
+            return true;
+        }
     }
-    portEXIT_CRITICAL(&(this->_mux));
-    return clicked;
+    return false;
 }

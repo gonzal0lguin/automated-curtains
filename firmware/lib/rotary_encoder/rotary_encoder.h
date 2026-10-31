@@ -3,39 +3,54 @@
 
 #include <Arduino.h>
 
+// EC11-style rotary encoder with push button.
+//  - Rotation is decoded in a GPIO interrupt with a quadrature state table
+//    (contact bounce cancels itself out).
+//  - The button is polled from tick() for robust debouncing and to detect
+//    click / long-press events.
 class RotaryEncoder {
 public:
-    RotaryEncoder(uint8_t pinA, uint8_t pinB, uint8_t pinSW);
+    enum class Event : uint8_t { None, Click, LongPress };
 
-    // Initialization (call this in your setup / Task 1 init)
+    RotaryEncoder(uint8_t pinA, uint8_t pinB, uint8_t pinSW, uint8_t transitionsPerDetent = 4);
+
     void begin();
 
-    // UI Control Methods
-    int getPosition();       // Get absolute position
-    int getDelta();          // Get movement since last check (perfect for menus)
-    bool isClicked();        // Returns true once per press, consuming the click
+    // Call every few ms from the UI loop (button debouncing / events).
+    void tick();
+
+    // --- rotation
+    int getDelta();          // detents since the previous call (signed)
+    int getPosition();       // absolute detent count since boot
+    long getRawCount();      // raw quadrature transitions (for calibration/debug)
+    void setReversed(bool reversed) { _reversed = reversed; }
+
+    // --- button
+    Event getEvent();        // pops the next pending button event
+    bool isPressed() const { return _stable; }
+    bool isClicked();        // convenience: true once per Click event
+
+    void setLongPressMs(uint16_t ms) { _longPressMs = ms; }
 
 private:
-    uint8_t _pinA;
-    uint8_t _pinB;
-    uint8_t _pinSW;
+    static void IRAM_ATTR isrEncoder(void* arg);
+    void pushEvent(Event e);
 
-    // Volatile variables modified by ISRs
-    volatile int _position;
-    volatile bool _buttonPressed;
-    volatile unsigned long _lastButtonPress;
-    
-    // State tracker of A and B pins
-    volatile uint8_t _encoderState; 
+    uint8_t _pinA, _pinB, _pinSW, _perDetent;
+    bool _reversed = false;
 
-    // Used to read the absolute position of the encoder in terms of "clicks"
-    int _lastReadClicks;
-
-    // FreeRTOS Mutex for thread-safe variable access
+    volatile int32_t _raw = 0;
+    volatile uint8_t _state = 0;
+    int32_t _consumedRaw = 0;
+    int32_t _position = 0;
     portMUX_TYPE _mux = portMUX_INITIALIZER_UNLOCKED;
 
-    static void IRAM_ATTR isrEncoder(void* arg);
-    static void IRAM_ATTR isrButton(void* arg);
+    // button state (only touched from tick()/getEvent(), same task)
+    bool _stable = false, _lastRead = false, _longFired = false;
+    uint32_t _changedAt = 0, _pressedAt = 0;
+    uint16_t _debounceMs = 25, _longPressMs = 700;
+    Event _queue[4];
+    uint8_t _qHead = 0, _qLen = 0;
 };
 
 #endif
