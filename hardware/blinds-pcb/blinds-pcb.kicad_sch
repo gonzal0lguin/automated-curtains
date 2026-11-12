@@ -629,381 +629,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Connector:RJ45_Shielded"
-			(pin_names
-				(offset 1.016)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "J"
-				(at -5.08 13.97 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify right)
-				)
-			)
-			(property "Value" "RJ45_Shielded"
-				(at 2.54 13.97 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0.635 90)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0.635 90)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "RJ connector, 8P8C (8 positions 8 connected), Shielded"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "8P8C RJ jack socket connector"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "8P8C* RJ31* RJ32* RJ33* RJ34* RJ35* RJ41* RJ45* RJ49* RJ61*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "RJ45_Shielded_0_1"
-				(polyline
-					(pts
-						(xy -6.35 1.905) (xy -5.08 1.905) (xy -5.08 1.905)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -6.35 0.635) (xy -5.08 0.635) (xy -5.08 0.635)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -6.35 -0.635) (xy -5.08 -0.635) (xy -5.08 -0.635)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -6.35 -1.905) (xy -5.08 -1.905) (xy -5.08 -1.905)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -6.35 -3.175) (xy -5.08 -3.175) (xy -5.08 -3.175)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -6.35 -4.445) (xy -6.35 6.985) (xy 3.81 6.985) (xy 3.81 4.445) (xy 5.08 4.445) (xy 5.08 3.175)
-						(xy 6.35 3.175) (xy 6.35 -0.635) (xy 5.08 -0.635) (xy 5.08 -1.905) (xy 3.81 -1.905) (xy 3.81 -4.445)
-						(xy -6.35 -4.445) (xy -6.35 -4.445)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -5.08 5.715) (xy -6.35 5.715)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -5.08 4.445) (xy -6.35 4.445)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -5.08 3.175) (xy -6.35 3.175) (xy -6.35 3.175)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 7.62 12.7)
-					(end -7.62 -10.16)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-			)
-			(symbol "RJ45_Shielded_1_1"
-				(pin passive line
-					(at 10.16 -7.62 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 10.16 -5.08 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 10.16 -2.54 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 10.16 0 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 10.16 2.54 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 10.16 5.08 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 10.16 7.62 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 10.16 10.16 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -12.7 90)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "SH"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Device:C_Polarized"
 			(pin_numbers
 				(hide yes)
@@ -4434,7 +4059,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 219.71 48.26 0)
+		(at 200.66 44.45 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4445,7 +4070,7 @@
 		(fields_autoplaced yes)
 		(uuid "04e90238-b3a2-41f3-8f2b-ebfea8632b8b")
 		(property "Reference" "#PWR08"
-			(at 219.71 54.61 0)
+			(at 200.66 50.8 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4456,7 +4081,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 219.71 53.34 0)
+			(at 200.66 49.53 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4466,7 +4091,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 219.71 48.26 0)
+			(at 200.66 44.45 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4477,7 +4102,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 219.71 48.26 0)
+			(at 200.66 44.45 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4488,7 +4113,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 219.71 48.26 0)
+			(at 200.66 44.45 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4917,7 +4542,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x08_Socket")
-		(at 228.6 35.56 0)
+		(at 210.82 31.75 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4928,7 +4553,7 @@
 		(fields_autoplaced yes)
 		(uuid "60b281cd-0346-47d6-816d-e6c520855dfd")
 		(property "Reference" "J1"
-			(at 229.87 35.5599 0)
+			(at 212.09 31.7499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4938,8 +4563,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "Conn_01x08_Socket"
-			(at 229.87 38.0999 0)
+		(property "Value" "LCD"
+			(at 212.09 34.2899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4950,7 +4575,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_XH_B8B-XH-AM_1x08_P2.50mm_Vertical"
-			(at 228.6 35.56 0)
+			(at 210.82 31.75 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4961,7 +4586,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 228.6 35.56 0)
+			(at 210.82 31.75 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4972,7 +4597,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x08, script generated"
-			(at 228.6 35.56 0)
+			(at 210.82 31.75 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5489,109 +5114,6 @@
 			(project "blinds-pcb"
 				(path "/9f53d7c2-f09d-4ba7-af4b-7502d0827958"
 					(reference "#PWR04")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:RJ45_Shielded")
-		(at 259.08 34.29 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "b15b17c0-50dc-4f28-961e-c5e18269fe7d")
-		(property "Reference" "J2"
-			(at 267.97 34.2899 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "RJ45_Shielded"
-			(at 267.97 36.8299 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Connector_RJ:RJ45_HALO_HFJ11-x2450HRL_Horizontal"
-			(at 259.08 34.925 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 259.08 34.925 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "RJ connector, 8P8C (8 positions 8 connected), Shielded"
-			(at 259.08 34.29 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "3"
-			(uuid "62f168ad-6654-459f-a028-6835e6a6c7ea")
-		)
-		(pin "SH"
-			(uuid "64abee76-c4cd-43af-9ef6-5e77b0220e93")
-		)
-		(pin "4"
-			(uuid "c1baba84-c0b6-44ce-a6b3-67345520e0d4")
-		)
-		(pin "5"
-			(uuid "da1ce5e5-4333-4356-b46d-84aaf102534e")
-		)
-		(pin "6"
-			(uuid "8cc7175b-96c8-4b19-9006-1dfcb8496345")
-		)
-		(pin "8"
-			(uuid "f98e955a-026a-409b-92ba-7c773fdd3fa7")
-		)
-		(pin "7"
-			(uuid "498ce37b-4b43-41d1-b781-7848a4d7911e")
-		)
-		(pin "1"
-			(uuid "31886e8d-4a51-465f-ad1a-3dd73cd44e17")
-		)
-		(pin "2"
-			(uuid "82882773-931e-49e5-935e-b60addc9c59f")
-		)
-		(instances
-			(project "blinds-pcb"
-				(path "/9f53d7c2-f09d-4ba7-af4b-7502d0827958"
-					(reference "J2")
 					(unit 1)
 				)
 			)
@@ -6196,7 +5718,7 @@
 	)
 	(symbol
 		(lib_id "LED:WS2812B")
-		(at 190.5 93.98 0)
+		(at 191.77 88.9 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6207,7 +5729,7 @@
 		(fields_autoplaced yes)
 		(uuid "f37e0fdb-948c-43df-b121-e0076fc45017")
 		(property "Reference" "D1"
-			(at 201.93 87.5598 0)
+			(at 203.2 82.4798 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6217,7 +5739,7 @@
 			)
 		)
 		(property "Value" "WS2812B"
-			(at 201.93 90.0998 0)
+			(at 203.2 85.0198 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6227,7 +5749,7 @@
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm"
-			(at 191.77 101.6 0)
+			(at 193.04 96.52 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6239,7 +5761,7 @@
 			)
 		)
 		(property "Datasheet" "https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf"
-			(at 193.04 103.505 0)
+			(at 194.31 98.425 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6251,7 +5773,7 @@
 			)
 		)
 		(property "Description" "RGB LED with integrated controller"
-			(at 190.5 93.98 0)
+			(at 191.77 88.9 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

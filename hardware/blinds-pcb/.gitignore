@@ -1,0 +1,19 @@
+# KiCad local history, backups and autosave
+.history/
+_restore_backup_*/
+*-backups/
+*.kicad_sch-bak
+*.kicad_pcb-bak
+_autosave-*
+\#auto_saved_files#
+
+# Lock files and caches
+~*.lck
+*.lck
+fp-info-cache
+
+# Per-user UI state (window layout, layer visibility)
+*.kicad_prl
+
+# Generated reports (kicad-pro MCP server, ERC/DRC)
+output/

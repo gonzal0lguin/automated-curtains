@@ -1,4 +1,5 @@
 (sym_lib_table
 	(version 7)
 	(lib (name "ESP32_NODEMCU") (type "KiCad") (uri "${KIPRJMOD}/local_libraries/custom_symbols.kicad_sym/ESP32_NODEMCU.kicad_sym") (options "") (descr ""))
+	(lib (name "EC35A1520402") (type "KiCad") (uri "${KIPRJMOD}/local_libraries/custom_symbols.kicad_sym/EC35A1520402.kicad_sym") (options "") (descr "Alps EC35A ring-type rotary encoder"))
 )
