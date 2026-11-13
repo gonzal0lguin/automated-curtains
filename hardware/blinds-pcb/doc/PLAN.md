@@ -13,20 +13,23 @@ Living document. Read this first when starting a new session; update the
 | # | Step | State |
 |---|---|---|
 | 0 | Plan agreed with user (2026-11-12) | done |
-| 1 | Git + project cleanup (baseline commit, `.gitignore`, untrack `.history`, library restructure) | **next** — not started |
-| 2 | Verify datasheets + LCSC part numbers, freeze BOM | partly done (see Verified facts) |
-| 3 | Symbols/footprints: TMC2209 BTT module, RJ45, DC jack, NodeMCU fixes | not started |
-| 4 | Wire schematic (one A3 sheet, boxed blocks), ERC to zero | not started |
-| 5 | Docs: `hardware-design.md`, `bom.md`, `pinmap.md`, hardware `README.md`, schematic PDF; update `firmware/include/config.h` + firmware README wiring table | not started |
-| 6 | PCB layout (separate phase, see below) | not started |
+| 1a | Branch `hw/panel-schematic`, `.gitignore`, untrack `.history` + `.kicad_prl`, baseline commit `09e70f2` | done |
+| 1b | Library restructure (`lib/blinds.kicad_sym`, `lib/blinds.pretty`, `lib/3d`, `doc/datasheets`) | done |
+| 2 | Verify datasheets + LCSC part numbers, freeze BOM | mostly done: `doc/bom.md`; parts marked "?" still unconfirmed |
+| 3 | Symbols/footprints: TMC2209 BTT module, RJ45, DC jack, NodeMCU fixes | done (two placeholder footprints, see Still to verify) |
+| 4 | Wire schematic (one A3 sheet, boxed blocks), ERC to zero | done: 0 ERC violations, netlist checked against the intended pin map (240 pins) |
+| 5 | Docs | `hardware-design.md`, `bom.md`, `pinmap.md`, `README.md` written (uncommitted). Reference designators in `bom.md`; `doc/schematic.pdf` exported. `config.h` deliberately **not** edited (would break the breadboard prototype); edits are listed in `pinmap.md` |
+| 6 | PCB layout (separate phase, see below) | **next** — start with "Update PCB from Schematic" and delete the 7 old footprints |
 
-**Blocker for steps 1b/3/4:** KiCad was open on the project (lock files
-`~blinds-pcb.*.lck`, process `/usr/bin/kicad`). It must be closed before the
-schematic, `sym-lib-table`, `fp-lib-table` or library files are edited from
-outside, otherwise KiCad overwrites the changes. Check with
-`pgrep -a kicad` before editing.
+**Nothing is committed since `09e70f2`** — docs, library move, schematic and
+generator are all in the working tree. Ask the user before committing.
 
-**Nothing in the project has been modified yet** except this file.
+**How the schematic was made:** `tools/gen_schematic/layout.py` (uses
+`sch.py`) writes `blinds-pcb.kicad_sch` and compares the netlist exported by
+`kicad-cli` with the intended pin→net map. Re-running it overwrites manual
+KiCad edits, so use it only until the user starts editing by hand. KiCad
+must be closed while it runs (`pgrep -a -x kicad`). The pre-generation files
+are in `output/pre-generation-backup/` (git-ignored).
 
 ## Decisions (agreed with the user)
 
@@ -45,6 +48,14 @@ outside, otherwise KiCad overwrites the changes. Check with
 - LCD module header order as printed, left to right:
   `BLK, CS, DC, RES, SDA, SCL, VIN, GND`. Backlight is driven directly by PWM
   on BLK (works today on GPIO25), so no external MOSFET.
+- **User answers 2026-11-12:** module is BTT TMC2209 **V1.3** (pin rows in
+  `doc/images.jpeg`); AS5600 is the standard module with its own pull-ups and
+  caps, powered from 3.3 V; the NodeMCU has **no** diode between USB 5 V and
+  the 5V pin; the LCD runs from **3.3 V**.
+- Consequences: LCD VIN wired straight to 3V3 (no solder jumper). Panel I2C
+  pull-ups are 10k (R7, R8), in parallel with the module's. DIAG/INDEX are not
+  socketed and there is no DIAG test pad. TMC pin 5 ("TX") is left open; the
+  board's own 1k (R5) feeds pin 4.
 - One schematic sheet (A3) with boxed, titled blocks — simpler than
   hierarchical sheets for a first board.
 - Layers: start with **2-layer**, solid GND pour on the bottom. 4-layer is the
@@ -70,14 +81,18 @@ NodeMCU in its socket. GPIO 1/3 = USB serial, 6–11 = flash: never used.
 | WS2812 data | **16** | new | 10k pull-down, then 74AHCT1G125 |
 | 12 V sense | **36** (VP) | new | 100k / 22k divider + 100 nF, ADC1 |
 | Ambient light | **39** (VN) | new | phototransistor + resistor, ADC1 |
-| TMC DIAG | — | — | **not routed to a GPIO** (no pin left). Brought to a test pad. Stall detection already comes from the AS5600 closed loop, and StallGuard is readable over UART. |
+| TMC DIAG | — | — | **not routed to a GPIO** (no pin left). Left unconnected. Stall detection already comes from the AS5600 closed loop, and StallGuard is readable over UART. |
 
 Firmware edits needed in `firmware/include/config.h`:
 `PIN_MOTOR_EN 26`, `PIN_TFT_CS 13`, `PIN_KNOB_SW 34`, `PIN_TMC_RX 35`,
 `I2C_FREQ_HZ 100000`, plus new `PIN_LED_DATA 16`, `PIN_VIN_SENSE 36`,
 `PIN_AMBIENT 39`. Knob code must not rely on internal pull-ups for GPIO34.
 
-## Circuit blocks to draw
+## Circuit blocks (as planned)
+
+The schematic is the reference now. Where this table differs, the Decisions
+section wins: no DIAG test pad, no LCD jumper (VIN = 3V3), I2C pull-ups 10k,
+LCD connector is J4.
 
 | Block | Circuit |
 |---|---|
@@ -117,20 +132,19 @@ Firmware edits needed in `firmware/include/config.h`:
   internal pull-ups. GPIO36/39 can glitch when WiFi/ADC is active, so they
   are used only for slow analog signals.
 
-## Still to verify (step 2)
+## Still to verify (before / during PCB layout)
 
-- LCSC numbers and stock for every part (none confirmed yet).
-- Inductor part: 4.7 µH shielded, Isat ≥ 3 A, hand-solderable (5×5 or 6×6 mm).
-- PTC fuse voltage rating; SMBJ15A clamp voltage vs 28 V TMC limit.
-- RJ45 jack part: no magnetics, current rating, footprint.
-- DC jack part and footprint.
-- BTT module DIAG/INDEX pin positions and row spacing (ask user for the
-  silkscreen or a photo).
-- Whether the user's AS5600 module has I2C pull-ups and how it is powered
-  (3V3; VDD5V and VDD3V3 tied together).
-- Whether the NodeMCU has a diode between USB 5 V and the 5V pin.
-- GC9A01 module supply: fed with 5 V or 3.3 V today?
-- EC35A footprint against the ALPS drawing (`EC35A1520402_ALPS_ELECTRIC.pdf`).
+- J2 footprint `RJ45_Amphenol_54602-x08_Horizontal`: user accepted it for
+  now; still compare with the real jack's drawing before ordering the PCB.
+- LCSC numbers still unconfirmed: 10k, 100 Ω, 22k, 1×8 headers, power LEDs.
+  Side tact switches exist on LCSC but were out of stock (2026-11-13).
+- R14 (ambient sensor load, 4.7k) is a starting value; TEPT4400 sensitivity
+  not checked against the datasheet.
+- Inductor Isat ≥ 3 A in the FNR6045S4R7MT datasheet.
+- RJ45 contact current rating (≥ 1.5 A).
+- EC35A footprint against the ALPS drawing (`doc/datasheets/`).
+- J4 pin 1 side: must match the LCD module's BLK end when placed.
+- Mounting holes are not in the schematic; add them in the PCB phase.
 
 ## Project problems found (to fix in step 1 / 3 / 4)
 
@@ -198,3 +212,29 @@ Firmware edits needed in `firmware/include/config.h`:
   recorded under Decisions. Verified AP63205 datasheet values and the BTT
   TMC2209 header pinout. Ambient sensor took GPIO39, so DIAG goes to a test
   pad only. Created this file. No other project file touched yet.
+- **2026-11-12 (2)** — Branch `hw/panel-schematic` created; baseline commit
+  `09e70f2` (adds `.gitignore`, untracks `.history` and `.kicad_prl`).
+  `.mcp.json` left untracked. LCSC lookup done with
+  `https://jlcsearch.tscircuit.com/api/search?q=<part>` (works with curl; it
+  does not list AP63205 or WS2812B 5050, so those numbers are unconfirmed).
+  Wrote `doc/bom.md`, `doc/pinmap.md`, `doc/hardware-design.md` and the
+  hardware `README.md`; removed `doc/README.md` (identical copy of
+  `firmware/README.md`). Docs are not committed yet. PTC changed to a 33 V
+  part (1812L200/33GR). KiCad still open at the end of this block, so steps
+  1b, 3 and 4 have not started.
+- **2026-11-12 (3)** — User closed KiCad and answered the open questions
+  (see Decisions). Libraries moved to `lib/` (`blinds.kicad_sym` with
+  EC35A1520402, a redrawn ESP32_NODEMCU and a new TMC2209_BTT; footprints in
+  `blinds.pretty`; 3D in `lib/3d`), lib tables rewritten, `local_libraries/`
+  removed. Schematic regenerated by script on one A3 sheet, 11 boxed blocks,
+  footprints and LCSC fields assigned: ERC 0 violations, netlist identical to
+  the intended map. `doc/schematic.pdf` exported, docs updated to match.
+  The `.kicad_pcb` was not touched. Nothing committed.
+- **2026-11-13** — User confirmed: RJ45 footprint OK for now, side switches
+  OK, TMC and NodeMCU row spacing correct, AP63205WU-7 = C2071056,
+  WS2812B = C114588 (already owned). Ambient sensor must look sideways
+  through a side opening of the enclosure (not visible from the front):
+  Q1 changed to TEPT4400 (THT 3 mm, horizontal footprint, C132178), R14 to
+  4.7k. Schematic regenerated: ERC 0, netlist check OK, PDF re-exported.
+  PCB placement note: Q1 at the board edge facing that opening. Nothing
+  committed.

@@ -26,7 +26,7 @@
 			)
 		)
 	)
-	(property "Datasheet" "${KIPRJMOD}/local_libraries/3d_models/EC35A1520402_ALPS_ELECTRIC.pdf"
+	(property "Datasheet" "${KIPRJMOD}/doc/datasheets/EC35A1520402_ALPS_ELECTRIC.pdf"
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
@@ -440,7 +440,7 @@
 		)
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/local_libraries/3d_models/EC35A1520402.STEP"
+	(model "${KIPRJMOD}/lib/3d/EC35A1520402.step"
 		(offset
 			(xyz 0 0 19.97)
 		)

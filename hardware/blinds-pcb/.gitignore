@@ -17,3 +17,6 @@ fp-info-cache
 
 # Generated reports (kicad-pro MCP server, ERC/DRC)
 output/
+
+# Editor state (contains a >1 GB IntelliSense database)
+.vscode/
