@@ -11,3 +11,7 @@
 # Python
 __pycache__/
 *.pyc
+
+.vscode/
+*.pdf
+jxl-1-28-inch-ips-colour-tft-lcd-display-module/

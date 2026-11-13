@@ -19,10 +19,13 @@ Living document. Read this first when starting a new session; update the
 | 3 | Symbols/footprints: TMC2209 BTT module, RJ45, DC jack, NodeMCU fixes | done (two placeholder footprints, see Still to verify) |
 | 4 | Wire schematic (one A3 sheet, boxed blocks), ERC to zero | done: 0 ERC violations, netlist checked against the intended pin map (240 pins) |
 | 5 | Docs | `hardware-design.md`, `bom.md`, `pinmap.md`, `README.md` written (uncommitted). Reference designators in `bom.md`; `doc/schematic.pdf` exported. `config.h` deliberately **not** edited (would break the breadboard prototype); edits are listed in `pinmap.md` |
-| 6 | PCB layout (separate phase, see below) | **next** — start with "Update PCB from Schematic" and delete the 7 old footprints |
+| 6a | Centre mechanics (screen carrier, push button, PCB holes) | done (rev 2: tower + captive riser + knob), uncommitted: `mech/` (see `mech/README.md`), footprint `Knob_Centre_Mechanics` = MECH1; SW1, SW4, MECH1 placed and locked at (150, 100) |
+| 6b | PCB placement | done, uncommitted: 120 × 120 mm outline, 4 × M3, all 87 footprints placed by `tools/pcb_placement/place.py`, net classes in the project file. See `doc/pcb-layout.md` |
+| 6c | PCB routing | **next** — not started; wait for the user's review of the placement |
 
-**Nothing is committed since `09e70f2`** — docs, library move, schematic and
-generator are all in the working tree. Ask the user before committing.
+Schematic state committed as `4281a75` (2026-11-13). The mechanical work
+(`mech/`, new footprint, PCB placement, `.gitignore`, this file) is
+**uncommitted** — ask the user before committing.
 
 **How the schematic was made:** `tools/gen_schematic/layout.py` (uses
 `sch.py`) writes `blinds-pcb.kicad_sch` and compares the netlist exported by
@@ -190,20 +193,12 @@ LCD connector is J4.
 - **12 V sense usefulness:** lets the firmware see power dropping and save the
   position before the rails collapse. Cheap (2 resistors + cap), so included.
 
-## PCB phase (after the schematic)
+## PCB phase
 
-1. Mechanics first: board outline, EC35 bore features from the PDF (tact
-   switch at centre, 3 guide-pin holes, wire slot), LED ring radius for 10
-   LEDs (36° spacing), mounting holes, connector positions.
-2. Board setup for JLC 2-layer, 1.6 mm, 1 oz: min track/clearance 0.2 mm,
-   vias 0.6/0.3 mm, copper-to-edge 0.5 mm.
-3. Net classes: `+12V` and motor phases 1.0 mm; `+5V` 0.6–0.8 mm; signals 0.25 mm.
-4. Placement: buck copied from the datasheet layout with short loops; NodeMCU
-   antenna over the board edge or a copper keep-out; motor traces away from
-   I2C and knob lines; decoupling caps next to their pins.
-5. Hand-solder footprints throughout; thermal reliefs on GND pads.
-6. DRC, JLC DFM check, 3D check against printed parts, then gerbers + drill
-   files (BOM/CPL not needed for hand assembly).
+Placement and routing rules are in `doc/pcb-layout.md` (it replaces the
+earlier rule list here). Remaining steps: user review of the placement,
+routing, GND zones, silkscreen (incl. "NOT ETHERNET" at J2), DRC, JLC DFM
+check, 3D check against the printed parts, gerbers + drill files.
 
 ## Log
 
@@ -238,3 +233,40 @@ LCD connector is J4.
   4.7k. Schematic regenerated: ERC 0, netlist check OK, PDF re-exported.
   PCB placement note: Q1 at the board edge facing that opening. Nothing
   committed.
+- **2026-11-13 (2)** — Committed the schematic state (`4281a75`; `.vscode/`
+  ignored, `.mcp.json` left untracked). Designed the centre mechanics in
+  CadQuery (`mech/panel_mech.py`, parameters at the top): riser (foot + tube
+  + Ø47 plate), bezel Ø50.1, guide block. Display keeps its standoffs and
+  JST (PH 2.0, not XH). Differences from the PDF: guide screws at r 7.0 (not
+  8.5, so the inserts fit in the Ø21.5 foot), wire slot 7 × 3 at r 7.25 /
+  270°, guide block held by 4 × M2 at r 20.5 on the diagonals (clear of the
+  encoder's pins, bosses and keep-outs), SW4 rotated 90°. The script also
+  writes the footprint `Knob_Centre_Mechanics` and checks interference (all
+  zero). Verified in a `kicad-cli` STEP export that the 3D models land in
+  the right place. (Superseded by entry (3) below.)
+  CadQuery lives in a throw-away venv; recreate it as in `mech/README.md`.
+- **2026-11-13 (3)** — Mechanics rev 2 after user review ("riser is
+  floating, screen can be pulled off"). Rev 1 did stop pull-out, but only
+  through heat-set inserts loaded in their weak direction, with no way to
+  set the rest position and an 8 mm guide. Now: fixed tower inside the
+  encoder bore (17 mm guide, press hard stop), riser = plate + hub + stem,
+  3 × M3×25 from the back into captive nyloc nuts (pull-out stop on the PCB
+  back, rest position adjustable), knob designed (Ø50.1, set screws on the
+  rotor). Guide block and its 4 × M2 holes are gone; MECH1 now has
+  3 × Ø3.4 (unchanged), 2 × Ø3.2 at r 7.5 / 30°, 150°, and the wire slot.
+  Layout rule is now: nothing taller than 1 mm inside r 26 (knob), LED ring
+  outside it; only screw heads behind the PCB (to −5.1). Checks: zero
+  interference in all pairs, DRC around the centre as expected.
+- **2026-11-13 (4)** — PCB placement (no routing). Board 120 × 120 mm,
+  r 5 corners; smaller does not work because the NodeMCU socket pins must
+  miss the LED ring. NodeMCU bottom-left on the back with USB at the bottom
+  edge, so the fourth M3 hole is at (124.5, 155) instead of the corner.
+  LED ring r 31, D6 at 198° clockwise, D8 at 9 o'clock. RJ45 + TMC top-left,
+  light sensor and spare I2C on the top edge, jack + BOOT + RESET on the
+  bottom edge, power bottom-right. Antenna keep-out rule area added. 3D:
+  sockets under U2/A1, simple models for TMC, RJ45, fuse, SW4
+  (`tools/pcb_placement/make_models.py`). Net classes and minimums written
+  to `blinds-pcb.kicad_pro`. DRC: only the expected courtyard findings
+  (parts under the socketed NodeMCU, SW1/SW4/MECH1) and silk warnings.
+  GND plan changed: zones on both layers, front is the main plane.
+  Nothing committed.

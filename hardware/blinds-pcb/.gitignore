@@ -20,3 +20,7 @@ output/
 
 # Editor state (contains a >1 GB IntelliSense database)
 .vscode/
+
+# Mechanical CAD: Python environment and the large generated assembly
+.venv/
+#mech/out/panel_mech_assembly.step
