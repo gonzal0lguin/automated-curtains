@@ -96,9 +96,11 @@ Layout consequences:
 PH 2.0 mm 8-pin plug at the display (the module's connector is a JST **PH**
 side-entry, not XH). The wires leave the plug towards the top, loop round the
 right-hand standoffs inside the bezel, go down the channel in the riser hub
-and the tower, through the PCB slot, then to J4 on the back. Thread the
-crimped wires through before fitting the housing at the J4 end: a housing does
-not fit through the 7 × 3 slot.
+and the tower, through the PCB slot, then to J4 on the back. J4 is a
+side-entry JST PH (same 8-pin PH housing as at the display) 18 mm below the
+slot, with its opening facing the slot, so the wires lie flat on the PCB.
+Thread the crimped wires through before fitting the housing at the J4 end: a
+housing does not fit through the 7 × 3 slot.
 
 ## Assembly order
 

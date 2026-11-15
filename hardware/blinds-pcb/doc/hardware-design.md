@@ -139,8 +139,10 @@ because the current also flows through the RJ45 contacts and 24AWG wire.
 
 ## 7. Display connector (GC9A01)
 
-8-pin JST-XH in the module's own order (BLK, CS, DC, RES, SDA, SCL, VIN,
-GND). BLK is driven directly by PWM from GPIO25, as it is today. VIN is
+8-pin JST-PH (2.0 mm, SMD, side entry) in the module's own order (BLK, CS,
+DC, RES, SDA, SCL, VIN, GND). It is surface-mount so that it can sit on the
+back under the knob, 18 mm from the wire slot; a through-hole part would
+have to stay outside the LED ring. BLK is driven directly by PWM from GPIO25, as it is today. VIN is
 fed from 3V3, as on the breadboard; 10 µF + 100 nF sit at the connector.
 
 ## 8. Motor and encoder connector (RJ45)

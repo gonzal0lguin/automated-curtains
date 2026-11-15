@@ -61,7 +61,7 @@ download mode fails.
 
 ## Connector pinouts
 
-**LCD (JST-XH 8-pin), same order as the module's silkscreen:**
+**LCD (J4, JST-PH 8-pin SMD), same order as the module's silkscreen:**
 
 | Pin | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |---|---|---|---|---|---|---|---|---|

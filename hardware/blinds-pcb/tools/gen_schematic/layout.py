@@ -177,9 +177,9 @@ C('C17', '100nF', 187.96, 177.8, '~KNOB_SW'); s.wire((187.96, 172.72), 'C17.1')
 s.wire('SW4.2', (190.5, 172.72)); s.label('KNOB_SW', 190.5, 172.72)
 
 # ============ 9. LCD ============
-s.box(270, 142, 340, 204, '9 · LCD  (GC9A01, JST-XH)')
-s.add('J4', 'Connector_Generic:Conn_01x08', 'LCD GC9A01', 'Connector_JST:JST_XH_B8B-XH-A_1x08_P2.50mm_Vertical', 322.58, 167.64, 0, {
-    1: 'TFT_BL', 2: 'TFT_CS', 3: 'TFT_DC', 4: 'TFT_RST', 5: 'TFT_MOSI', 6: 'TFT_SCLK', 7: ('+3V3', 20.32), 8: 'GND'}, 'C10385', refpos=(320.04, 157.48), valpos=(320.04, 182.88))
+s.box(270, 142, 340, 204, '9 · LCD  (GC9A01, JST-PH SMD)')
+s.add('J4', 'Connector_Generic:Conn_01x08', 'LCD GC9A01', 'Connector_JST:JST_PH_S8B-PH-SM4-TB_1x08-1MP_P2.00mm_Horizontal', 322.58, 167.64, 0, {
+    1: 'TFT_BL', 2: 'TFT_CS', 3: 'TFT_DC', 4: 'TFT_RST', 5: 'TFT_MOSI', 6: 'TFT_SCLK', 7: ('+3V3', 20.32), 8: 'GND'}, '', refpos=(320.04, 157.48), valpos=(320.04, 182.88))
 C('C18', '10uF', 279.4, 190.5, '+3V3')
 C('C19', '100nF', 299.72, 190.5, '+3V3')
 s.text('Same order as the module:\nBLK CS DC RES SDA SCL VIN GND', 273, 150)

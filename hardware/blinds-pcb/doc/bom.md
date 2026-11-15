@@ -76,7 +76,7 @@ package match.
 | Part | Value / type | Package | Qty | LCSC | Notes |
 |---|---|---|---|---|---|
 | RJ45 jack | 8P8C, **no magnetics** — KH-RJ45-56-8P8C | THT right-angle | 1 | C2683359 ✔ | Confirm contact current (≥ 1.5 A). Schematic uses the Amphenol 54602 footprint as a placeholder: compare with this part's drawing before layout |
-| LCD connector | JST-XH 8-pin header (XH-8A) | THT | 1 | C10385 ✔ | |
+| LCD connector | JST-PH 8-pin, side entry, SMD (S8B-PH-SM4-TB) | SMD, 2.0 mm pitch | 1 | ? | Same PH family as the plug on the display. Was a THT JST-XH (C10385) until 2026-11-14 |
 | I2C header | JST-XH 4-pin (B4B-XH-A) | THT | 1 | C594232 ✔ | |
 | I2C pull-ups | 10 kΩ | 0805 | 2 | C17414 ? | In parallel with the ones on the AS5600 module |
 | Outgoing 3V3 bypass | 100 nF | 0805 | 1 | C38141 ✔ | At the RJ45 |

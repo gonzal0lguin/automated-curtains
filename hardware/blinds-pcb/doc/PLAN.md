@@ -19,13 +19,17 @@ Living document. Read this first when starting a new session; update the
 | 3 | Symbols/footprints: TMC2209 BTT module, RJ45, DC jack, NodeMCU fixes | done (two placeholder footprints, see Still to verify) |
 | 4 | Wire schematic (one A3 sheet, boxed blocks), ERC to zero | done: 0 ERC violations, netlist checked against the intended pin map (240 pins) |
 | 5 | Docs | `hardware-design.md`, `bom.md`, `pinmap.md`, `README.md` written (uncommitted). Reference designators in `bom.md`; `doc/schematic.pdf` exported. `config.h` deliberately **not** edited (would break the breadboard prototype); edits are listed in `pinmap.md` |
-| 6a | Centre mechanics (screen carrier, push button, PCB holes) | done (rev 2: tower + captive riser + knob), uncommitted: `mech/` (see `mech/README.md`), footprint `Knob_Centre_Mechanics` = MECH1; SW1, SW4, MECH1 placed and locked at (150, 100) |
-| 6b | PCB placement | done, uncommitted: 120 × 120 mm outline, 4 × M3, all 87 footprints placed by `tools/pcb_placement/place.py`, net classes in the project file. See `doc/pcb-layout.md` |
-| 6c | PCB routing | **next** — not started; wait for the user's review of the placement |
+| 6a | Centre mechanics (screen carrier, push button, PCB holes) | done (rev 2: tower + captive riser + knob); 3D print tested by the user, works (2026-11-14). Footprint `Knob_Centre_Mechanics` = MECH1; SW1, SW4, MECH1 placed and locked at (150, 100) |
+| 6b | PCB placement | done: 120 × 120 mm outline, 4 × M3, all 87 footprints placed by `tools/pcb_placement/place.py`. J4 changed to an SMD JST-PH near the wire slot (2026-11-14). See `doc/pcb-layout.md` |
+| 6c | PCB routing | done by `tools/pcb_routing/route.py`, **uncommitted**. User (2026-11-14): looks fine for now, detailed review later. All nets routed, GND zones on both layers, 0 unconnected, no clearance errors |
+| 6d | DRC clean-up and silkscreen | done by `tools/pcb_silk/silk.py`, **uncommitted**: no DRC errors, no silkscreen warnings; 4 "footprint differs from library" warnings are intended (see `doc/pcb-layout.md`). Front artwork: flag of Chile and four volcanoes |
+| 6e | JLC DFM check, 3D check, gerbers | **next**, after the user's routing review |
 
-Schematic state committed as `4281a75` (2026-11-13). The mechanical work
-(`mech/`, new footprint, PCB placement, `.gitignore`, this file) is
-**uncommitted** — ask the user before committing.
+Schematic state committed as `4281a75` (2026-11-13), mechanics and placement
+as `dc9236b`. The routing work of 2026-11-14 (PCB, schematic footprint of J4,
+`tools/pcb_routing/`, `tools/pcb_silk/`, `place.py`, two library footprints,
+docs) is **uncommitted** — ask the user
+before committing.
 
 **How the schematic was made:** `tools/gen_schematic/layout.py` (uses
 `sch.py`) writes `blinds-pcb.kicad_sch` and compares the netlist exported by
@@ -59,6 +63,9 @@ are in `output/pre-generation-backup/` (git-ignored).
   pull-ups are 10k (R7, R8), in parallel with the module's. DIAG/INDEX are not
   socketed and there is no DIAG test pad. TMC pin 5 ("TX") is left open; the
   board's own 1k (R5) feeds pin 4.
+- **J4 (LCD) is an SMD side-entry JST-PH** (S8B-PH-SM4-TB), chosen by the
+  user on 2026-11-14 instead of the THT JST-XH, so that it can sit 18 mm from
+  the wire slot. LCSC number not found yet.
 - One schematic sheet (A3) with boxed, titled blocks — simpler than
   hierarchical sheets for a first board.
 - Layers: start with **2-layer**, solid GND pour on the bottom. 4-layer is the
@@ -95,7 +102,7 @@ Firmware edits needed in `firmware/include/config.h`:
 
 The schematic is the reference now. Where this table differs, the Decisions
 section wins: no DIAG test pad, no LCD jumper (VIN = 3V3), I2C pull-ups 10k,
-LCD connector is J4.
+LCD connector is J4 and is a JST-PH SMD part.
 
 | Block | Circuit |
 |---|---|
@@ -146,7 +153,13 @@ LCD connector is J4.
 - Inductor Isat ≥ 3 A in the FNR6045S4R7MT datasheet.
 - RJ45 contact current rating (≥ 1.5 A).
 - EC35A footprint against the ALPS drawing (`doc/datasheets/`).
-- J4 pin 1 side: must match the LCD module's BLK end when placed.
+- J4 pin 1 (BLK) is at x = 143 (left, seen from the front). Check it against
+  the cable you will use: a ready-made PH–PH cable may be wired 1:1 or
+  reversed.
+- J4 LCSC number (S8B-PH-SM4-TB) and its footprint against the real part.
+- The LCD plug slides in 5 mm above the encoder terminals: trim those three
+  solder joints flat.
+- Routing review by the user in KiCad (see `doc/pcb-layout.md`, "Routing").
 - Mounting holes are not in the schematic; add them in the PCB phase.
 
 ## Project problems found (to fix in step 1 / 3 / 4)
@@ -195,10 +208,10 @@ LCD connector is J4.
 
 ## PCB phase
 
-Placement and routing rules are in `doc/pcb-layout.md` (it replaces the
-earlier rule list here). Remaining steps: user review of the placement,
-routing, GND zones, silkscreen (incl. "NOT ETHERNET" at J2), DRC, JLC DFM
-check, 3D check against the printed parts, gerbers + drill files.
+Placement, routing and the rules are in `doc/pcb-layout.md` (it replaces the
+earlier rule list here). Script order: `place.py` → `route.py` → `silk.py`.
+Remaining steps: user review of the routing, JLC DFM check, 3D check against
+the printed parts, gerbers + drill files.
 
 ## Log
 
@@ -270,3 +283,29 @@ check, 3D check against the printed parts, gerbers + drill files.
   (parts under the socketed NodeMCU, SW1/SW4/MECH1) and silk warnings.
   GND plan changed: zones on both layers, front is the main plane.
   Nothing committed.
+- **2026-11-14** — User: the printed push-button / screen mechanics work.
+  J4 was 37 mm from the wire slot only because it was through-hole (pins
+  must miss the knob and the LED ring); user chose an SMD side-entry JST-PH.
+  Schematic footprint changed by hand and in `layout.py` (ERC 0); `place.py`
+  swaps the footprint on the board and places it at (150, 130), opening
+  towards the slot. Placement changes for routing: F1, D2, C1–C3 turned or
+  moved, D5 under the NodeMCU, C11 and C13 at the TMC pins. Routing done by
+  the new `tools/pcb_routing/route.py` (own grid router; Freerouting could
+  not be run in this session). Result: 0 unconnected, no clearance errors,
+  parity clean; only the known courtyard / NPTH findings and silk warnings
+  remain. `doc/schematic.pdf` re-exported, docs updated. Nothing committed.
+- **2026-11-14 (2)** — User: routing looks fine for now, detailed review
+  later; asked for DRC fixes, silkscreen and two front drawings. Courtyards
+  now describe what touches the PCB: socket strips for U2 and A1 (parts may
+  sit under the modules), bore of the encoder left open (SW4 and the MECH1
+  holes are inside it). That removed all 13 DRC errors. New
+  `tools/pcb_silk/silk.py`: places all reference texts free of pads and
+  other silkscreen, adds labels (RJ45 warning, pin names at J3 / J4 / TMC /
+  NodeMCU, BOOT, RESET, 12 V jack, board title, `JLCJLCJLCJLC` for the order
+  number), clips silkscreen at the board edge, and draws on the front the
+  flag of Chile with "Designed in Chile by Gonz" (right of the ring) and
+  a logo-style emblem of Lonquimay, Llaima, Villarrica, Osorno with
+  "ANDES MADE" (top; redrawn the same day as silhouettes against a banded sky). `route.py`
+  keeps stitching vias out of the two drawings (120 instead of 144).
+  DRC: 0 errors, 0 unconnected, parity clean; 4 warnings "footprint differs
+  from library" (A1, U2, J1, J2), intended. Nothing committed.

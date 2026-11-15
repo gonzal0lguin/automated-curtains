@@ -106,6 +106,17 @@
 		(layer "F.CrtYd")
 		(uuid "65a7c7f6-24a2-42ff-8daf-b726d1a24061")
 	)
+	(fp_circle
+		(center 0 0)
+		(end 11.6 0)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "5d0c1a52-8e55-4b1f-9a3e-6a1b2f0e7c03")
+	)
 	(fp_line
 		(start -18.25 -1.75)
 		(end -18.25 1.75)
