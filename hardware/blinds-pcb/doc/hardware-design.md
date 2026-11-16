@@ -4,8 +4,9 @@ What each part of the circuit does and why its values were chosen, so every
 decision can be checked. Companion files: [`pinmap.md`](pinmap.md) (pins and
 connectors), [`bom.md`](bom.md) (parts), [`PLAN.md`](PLAN.md) (work log).
 
-Status: **design defined, schematic not wired yet.** Items marked *to check*
-are open.
+Status: **rev A schematic and PCB done, reviewed before ordering (2026-11-15).**
+Items marked *to check* are open; most are checks on parts you already own.
+Layout notes: [`pcb-layout.md`](pcb-layout.md).
 
 ## Overview
 
@@ -29,6 +30,10 @@ Three rails:
 ## 1. Power input
 
 **Chain:** barrel jack → PTC fuse → series Schottky → TVS → `+12V`.
+
+- **Barrel jack DC005-T20** (3 A, 2.0 mm pin, takes 5.5 × 2.1 plugs). The
+  first choice, C16214, is rated only 1 A. The plated slots of J1 are
+  3.6 mm long, so either jack fits.
 
 - **PTC fuse, 2 A hold, 33 V.** Opens on a short and resets when it cools.
   The voltage rating must exceed the supply; 16 V parts are too marginal for
@@ -67,11 +72,15 @@ capacitor tight against VIN/GND, short SW node, ground plane underneath.
 
 ## 3. NodeMCU supply
 
-- `+5V` reaches the NodeMCU 5V pin through a **B5819W Schottky**. Without it,
-  plugging in USB while the 12 V adapter is off would power the LED ring and
-  back-feed the buck output from your computer's USB port. With it, USB only
-  powers the NodeMCU. The pin then sees about 4.6 V, enough for the on-board
-  3.3 V regulator.
+- `+5V` reaches the NodeMCU 5V pin through a **DSK34 Schottky** (3 A,
+  SOD-123FL on the SOD-123 pads). Without it, plugging in USB while the
+  12 V adapter is off would power the LED ring and back-feed the buck output
+  from your computer's USB port. With it, USB only powers the NodeMCU. It
+  drops about 0.37 V at 0.5 A, so the pin sees about 4.6 V.
+- **Headroom.** The NodeMCU's AMS1117-type regulator needs about 1.1 V, so
+  4.6 V is enough but not lavish. That is why D5 has its own track straight
+  from C21 (the buck side of the `+5V` net) instead of sharing the LED ring's
+  arc: LED current and its PWM ripple stay off the ESP32's supply.
 - 10 µF + 100 nF at the 5V pin, 100 nF at the 3V3 pin.
 - This NodeMCU has **no diode** between its USB 5 V and the 5V pin (confirmed
   by the owner). So with both supplies connected, whichever is higher feeds
@@ -86,10 +95,10 @@ capacitor tight against VIN/GND, short SW node, ground plane underneath.
 | VM | `+12V`, with 100 µF / 35 V + 100 nF at the pins | The driver draws current in fast pulses; without a bulk capacitor the supply spikes can destroy it. Trinamic and the firmware README both call for 100 µF. |
 | GND (both) | GND | |
 | VCC_IO | `+3V3` + 100 nF | Sets the logic level to match the ESP32. |
-| EN | GPIO26, 10k pull-up to 3V3 | EN is active low. The pull-up keeps the motor off while the ESP32 boots or is being flashed. |
+| EN | GPIO26, 10k pull-up to 3V3 | EN is active low. The pull-up keeps the motor off while the ESP32 boots or is being flashed. *To check:* BTT does not document a resistor on EN. Measure the module's EN pin to GND; if it shows about 10k, change R6 to 2.2k. |
 | STEP / DIR | GPIO27 / GPIO14 | |
 | MS1, MS2 | GND | In UART mode they set the address: both low = address 0 (`TMC_ADDRESS 0`). |
-| PDN_UART | GPIO35 directly, GPIO17 through 1 kΩ | Single-wire UART: TX and RX share the pin, the resistor stops them fighting. |
+| PDN_UART | GPIO35 directly, GPIO17 through 1 kΩ | Single-wire UART: TX and RX share the pin, the resistor stops them fighting. BTT's V1.3 manual confirms the factory UART pin is the 4th from EN ("RX"). |
 | CLK | GND | Selects the internal clock. |
 | A1, A2, B1, B2 | RJ45 pins 1, 2, 3, 6 | One coil per twisted pair. |
 | PDN_UART_TX (pin 5, printed "TX") | Not connected | The board has its own 1 kΩ (R5), so only pin 4 is used. |
@@ -149,8 +158,10 @@ fed from 3V3, as on the breadboard; 10 µF + 100 nF sit at the connector.
 
 Pinout in [`pinmap.md`](pinmap.md). Design rules for this port:
 
-1. **Jack without magnetics.** Ethernet "MagJacks" contain transformers that
-   block DC and I2C.
+1. **Jack without magnetics:** Amphenol 54602-908LF (unshielded), the part
+   the footprint is drawn for. Ethernet "MagJacks" contain transformers that
+   block DC and I2C. The Kinghelm KH-RJ45-56 first listed does not fit this
+   footprint (1.02 mm pin pitch, shield pins).
 2. **Current.** Each coil wire carries the full phase current. 24AWG copper
    and jack contacts are comfortable to roughly 1 A; that is the reason for
    the current cap above. Use solid-copper 24AWG cable, not copper-clad
@@ -179,7 +190,11 @@ port gives trouble.
   (R14) to GND; the voltage on GPIO39 rises with light. It is a through-hole
   part mounted lying flat at the board edge, so it looks sideways through the
   opening on the side of the enclosure, which is not visible from the front.
-  R14 sets the sensitivity: tune it on the finished unit.
+  R14 sets the sensitivity: tune it on the finished unit. Datasheet: about
+  200 µA at 100 lx (15–70 µA at 20 lx, three bins), so with 4.7k the reading
+  reaches the ADC's usable top (about 2.45 V at 11 dB) near 250 lx. Use 2.2k
+  if the opening sees daylight. *To check:* pad 1 (square) is the collector;
+  compare with the C/E marking of the part before bending the leads.
 - **RESET and BOOT buttons**, side-mounted: RESET pulls the NodeMCU EN pin to
   GND, BOOT pulls GPIO0 to GND.
 - **Spare I2C header** (3V3, GND, SDA, SCL) for future sensors.
@@ -193,15 +208,19 @@ port gives trouble.
 | Stack | 2 layers, 1.6 mm, 1 oz copper; bottom layer mostly solid GND |
 | Track widths | +12V and motor phases 1.0 mm; +5V 0.6–0.8 mm; signals 0.25 mm |
 | Clearance / vias | 0.2 mm minimum; vias 0.6 mm pad / 0.3 mm drill |
-| Buck | Copy the datasheet layout: input caps touching VIN/GND, tiny SW copper, inductor next to SW, GND vias at the caps, no signals under the inductor |
+| Buck | Copy the datasheet layout: input caps touching VIN/GND, tiny SW copper, inductor next to SW, GND vias at the caps, no signals under the inductor. GND pads of U1, C1–C3, C5, C6 and D2 join the zones solidly (no thermal spokes) |
 | Driver | Bulk capacitor within a few mm of VM/GND |
 | Antenna | NodeMCU antenna end hangs over the board edge or over a copper-free zone; keep it away from the encoder's metal body and the LCD |
+| Encoder lugs | ALPS marks four "wiring prohibited" squares on the diagonals (r 14.3–18.2, 4.4 mm wide), where the metal lugs sit on the front. They are keep-out rule areas on F.Cu: no tracks or vias, GND fill allowed |
 | Noisy vs quiet | Motor traces away from I2C, knob and ADC traces |
 | Hand soldering | `_HandSolder` footprints, thermal reliefs on GND pads, no parts closer than ~1 mm |
 | Mechanics | Encoder bore features from the PDF (centre switch, guide-pin holes, wire slot); 10 LEDs every 36° |
 
 ## Bring-up order
 
+0. Before soldering: check the NodeMCU's module is a **WROOM**-32 (on a
+   WROVER, GPIO16/17 belong to the PSRAM), measure the TMC module's EN pin
+   to GND (see section 4), and check Q1's collector lead.
 1. Without NodeMCU, driver or LCD: apply 12 V from a current-limited supply
    (≈ 100 mA limit). Check +12V ≈ 11.5 V and +5V = 5.0 V.
 2. Plug in the NodeMCU; check 3V3. Flash over USB with it socketed.
@@ -216,4 +235,7 @@ port gives trouble.
   sense resistor, VREF.
 - Watterott SilentStepStick TMC2209 pin configuration: EN, MS1/MS2, SPREAD.
 - ALPS EC35A datasheet: `doc/datasheets/EC35A1520402_ALPS_ELECTRIC.pdf`.
+- BIGTREETECH TMC2209 V1.3 user manual: pin description, factory UART pin.
+- LCSC datasheets: DC005-T20 (C111567), DSK34 (C727076), TEPT4400 (C132178),
+  Kinghelm KH-RJ45-56 (C2683359, the jack that did not fit).
 - Earlier design conversation: `Curtain control panel hardware design.pdf`.

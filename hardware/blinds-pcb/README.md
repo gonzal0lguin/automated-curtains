@@ -4,8 +4,9 @@ KiCad 10 project for the wall control panel of the motorized blind: a round
 board that carries the ESP32, the stepper driver, the ring knob, the LED ring
 and the connectors for the round display and the motor.
 
-**Status: schematic complete** (ERC clean, [`doc/schematic.pdf`](doc/schematic.pdf)).
-PCB layout is the next phase; the board file still holds an old, partial placement.
+**Status: rev A ready to order** (2026-11-15). Schematic ERC clean
+([`doc/schematic.pdf`](doc/schematic.pdf)); PCB placed, routed and DRC clean;
+fabrication files and the order guide are in [`fab/`](fab/README.md).
 
 ## What is on the board
 
@@ -28,8 +29,11 @@ PCB layout is the next phase; the board file still holds an old, partial placeme
 | [`doc/pinmap.md`](doc/pinmap.md) | ESP32 pin map, connector pinouts, firmware edits for the PCB |
 | [`doc/bom.md`](doc/bom.md) | Parts list with packages and LCSC numbers |
 | [`doc/schematic.pdf`](doc/schematic.pdf) | Printable schematic |
+| [`doc/pcb-layout.md`](doc/pcb-layout.md) | Placement, routing, keep-outs, silkscreen, DRC state |
+| [`fab/README.md`](fab/README.md) | Gerbers, LCSC order list, how to order, checks before paying |
 | [`doc/PLAN.md`](doc/PLAN.md) | Working plan, decisions and log |
 | [`tools/gen_schematic/`](tools/gen_schematic/) | Script that generated the schematic and checks its netlist. **Re-running it overwrites edits made in KiCad** |
+| `tools/pcb_placement/`, `tools/pcb_routing/`, `tools/pcb_silk/` | Placement, routing and silkscreen scripts. The board now has hand edits and review fixes: **do not re-run `place.py` or `route.py`** (see `doc/pcb-layout.md`) |
 | [`doc/Curtain control panel hardware design.pdf`](doc/Curtain%20control%20panel%20hardware%20design.pdf) | Earlier design study, including the press-the-screen mechanism |
 | [`../../firmware/README.md`](../../firmware/README.md) | Firmware: build, flash, test firmwares, API |
 

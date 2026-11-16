@@ -21,15 +21,17 @@ Living document. Read this first when starting a new session; update the
 | 5 | Docs | `hardware-design.md`, `bom.md`, `pinmap.md`, `README.md` written (uncommitted). Reference designators in `bom.md`; `doc/schematic.pdf` exported. `config.h` deliberately **not** edited (would break the breadboard prototype); edits are listed in `pinmap.md` |
 | 6a | Centre mechanics (screen carrier, push button, PCB holes) | done (rev 2: tower + captive riser + knob); 3D print tested by the user, works (2026-11-14). Footprint `Knob_Centre_Mechanics` = MECH1; SW1, SW4, MECH1 placed and locked at (150, 100) |
 | 6b | PCB placement | done: 120 × 120 mm outline, 4 × M3, all 87 footprints placed by `tools/pcb_placement/place.py`. J4 changed to an SMD JST-PH near the wire slot (2026-11-14). See `doc/pcb-layout.md` |
-| 6c | PCB routing | done by `tools/pcb_routing/route.py`, **uncommitted**. User (2026-11-14): looks fine for now, detailed review later. All nets routed, GND zones on both layers, 0 unconnected, no clearance errors |
-| 6d | DRC clean-up and silkscreen | done by `tools/pcb_silk/silk.py`, **uncommitted**: no DRC errors, no silkscreen warnings; 4 "footprint differs from library" warnings are intended (see `doc/pcb-layout.md`). Front artwork: flag of Chile and four volcanoes |
-| 6e | JLC DFM check, 3D check, gerbers | **next**, after the user's routing review |
+| 6c | PCB routing | done by `tools/pcb_routing/route.py`. User moved one `+12V` corner by hand (2026-11-15): **do not re-run `route.py`**, it would undo it. User (2026-11-14): looks fine for now, detailed review later. All nets routed, GND zones on both layers, 0 unconnected, no clearance errors |
+| 6d | DRC clean-up and silkscreen | done by `tools/pcb_silk/silk.py`: no DRC errors, no silkscreen warnings; 4 "footprint differs from library" warnings are intended (see `doc/pcb-layout.md`). Front artwork: flag of Chile and four volcanoes (emblem redrawn from real terrain 2026-11-15, `emblem.py`) |
+| 6e | JLC DFM check, gerbers, order guide | done 2026-11-15, **uncommitted**: `fab/` (gerber zip, `lcsc-order.csv`, 1:1 print PDFs, `README.md` with the order steps). 3D check not repeated (centre mechanics unchanged since the print test) |
+| 6f | Pre-order review | done 2026-11-15, **uncommitted**: full review of parts, values, schematic, PCB. Fixed: J2 part → Amphenol 54602-908LF (the Kinghelm jack did not fit the footprint), J1 → DC005-T20 3 A with 3.6 mm slots, D5 → DSK34, own +5V track C21 → D5, encoder lug keep-outs, KNOB_SW moved off a lug, buck GND pads solid. `tools/pcb_routing/review_fixes.py`. ERC 0, DRC 0 errors, fab files exported again |
+| 7 | Order | **next, user**: own final review, paper fit check, checks on owned parts (`fab/README.md`), then JLCPCB + LCSC |
 
 Schematic state committed as `4281a75` (2026-11-13), mechanics and placement
-as `dc9236b`. The routing work of 2026-11-14 (PCB, schematic footprint of J4,
-`tools/pcb_routing/`, `tools/pcb_silk/`, `place.py`, two library footprints,
-docs) is **uncommitted** — ask the user
-before committing.
+as `dc9236b`, routing and silkscreen as `6022ea4` (2026-11-15). The work
+after that (LCSC fields, `fab/`, review fixes, docs) is **uncommitted** — ask
+the user before committing. **Do not re-run `place.py` or `route.py`**: the
+board has hand edits and the review fixes.
 
 **How the schematic was made:** `tools/gen_schematic/layout.py` (uses
 `sch.py`) writes `blinds-pcb.kicad_sch` and compares the netlist exported by
@@ -65,7 +67,10 @@ are in `output/pre-generation-backup/` (git-ignored).
   board's own 1k (R5) feeds pin 4.
 - **J4 (LCD) is an SMD side-entry JST-PH** (S8B-PH-SM4-TB), chosen by the
   user on 2026-11-14 instead of the THT JST-XH, so that it can sit 18 mm from
-  the wire slot. LCSC number not found yet.
+  the wire slot. LCSC C265121.
+- **Pre-order review (2026-11-15):** J2 = Amphenol 54602-908LF (C2847314),
+  J1 = DC005-T20 (C111567), D5 = DSK34 (C727076); D5 fed by its own track
+  from C21. Agreed by the user ("fix the issues that can be done").
 - One schematic sheet (A3) with boxed, titled blocks — simpler than
   hierarchical sheets for a first board.
 - Layers: start with **2-layer**, solid GND pour on the bottom. 4-layer is the
@@ -144,22 +149,21 @@ LCD connector is J4 and is a JST-PH SMD part.
 
 ## Still to verify (before / during PCB layout)
 
-- J2 footprint `RJ45_Amphenol_54602-x08_Horizontal`: user accepted it for
-  now; still compare with the real jack's drawing before ordering the PCB.
-- LCSC numbers still unconfirmed: 10k, 100 Ω, 22k, 1×8 headers, power LEDs.
-  Side tact switches exist on LCSC but were out of stock (2026-11-13).
-- R14 (ambient sensor load, 4.7k) is a starting value; TEPT4400 sensitivity
-  not checked against the datasheet.
-- Inductor Isat ≥ 3 A in the FNR6045S4R7MT datasheet.
-- RJ45 contact current rating (≥ 1.5 A).
-- EC35A footprint against the ALPS drawing (`doc/datasheets/`).
+- J2: order the Amphenol 54602-908LF (C2847314; LCSC stock not shown, also
+  at Digi-Key / RS / element14). No other jack fits the footprint.
+- TMC module EN: measure EN to GND; ≈ 10k pull-down → R6 = 2.2k.
+- NodeMCU module is a WROOM (GPIO16/17 free), not a WROVER.
+- Side switches C285519 (PTS645VK392LFS): pin pattern against the datasheet.
+- R14 (4.7k): with the TEPT4400's 200 µA at 100 lx the ADC tops out near
+  250 lx; 2.2k if the opening sees daylight. Q1 pad 1 = collector: check the
+  part's marking.
+- RJ45 contact current rating (≥ 1.5 A) in the Amphenol datasheet.
 - J4 pin 1 (BLK) is at x = 143 (left, seen from the front). Check it against
   the cable you will use: a ready-made PH–PH cable may be wired 1:1 or
   reversed.
-- J4 LCSC number (S8B-PH-SM4-TB) and its footprint against the real part.
 - The LCD plug slides in 5 mm above the encoder terminals: trim those three
   solder joints flat.
-- Routing review by the user in KiCad (see `doc/pcb-layout.md`, "Routing").
+- Final review by the user in KiCad (see `doc/pcb-layout.md`, "Review fixes").
 - Mounting holes are not in the schematic; add them in the PCB phase.
 
 ## Project problems found (to fix in step 1 / 3 / 4)
@@ -309,3 +313,43 @@ the printed parts, gerbers + drill files.
   keeps stitching vias out of the two drawings (120 instead of 144).
   DRC: 0 errors, 0 unconnected, parity clean; 4 warnings "footprint differs
   from library" (A1, U2, J1, J2), intended. Nothing committed.
+- **2026-11-15** — User moved one `+12V` corner by hand (120.75, 152.25 →
+  150.25); zones refilled with `pcbnew` only (no script re-run), DRC clean.
+  Committed as `6022ea4`. LCSC numbers found for everything: 10k C17414,
+  100 Ω C17408, 22k C17560, J4 C265121, 1×8 socket C2905417, side switches
+  C285519, LEDs C2295 / C2297; written to the schematic, `layout.py`, the
+  board and `bom.md` (ERC 0). J3 pin labels thickened to 0.15 mm (JLCPCB
+  minimum), also in `silk.py`. Fabrication files exported to `fab/` with an
+  order guide. Not committed. No gerber viewer was available here: the
+  visual check is JLCPCB's preview.
+- **2026-11-15 (2)** — Pre-order review (user asked for a final check of
+  parts, values, schematic, PCB, then to fix what can be fixed). Found and
+  fixed: the order list had a Kinghelm RJ45 (1.02 mm pitch, shield pins)
+  that does not fit the Amphenol 54602 footprint → J2 is now the Amphenol
+  54602-908LF. DC jack C16214 rated 1 A → DC005-T20 (3 A), J1 slots widened
+  to 3.6 mm so both fit. The NodeMCU's 5 V came from the far end of the LED
+  ring arc (about 0.12 Ω shared with the LEDs) → own track from C21 to D5
+  (about 0.06 Ω), and D5 = DSK34 (lower drop). Encoder lug "wiring
+  prohibited" areas are now F.Cu keep-out rule areas; KNOB_SW moved off one.
+  Buck GND pads solid. D6→D7 data rerouted (56 mm). All by
+  `tools/pcb_routing/review_fixes.py` on top of the existing routing; J1
+  silkscreen trimmed. ERC 0; DRC 0 errors, 0 unconnected, parity clean, the
+  4 intended warnings. Gerbers, zip, prints, `doc/schematic.pdf` exported
+  again; docs, `bom.md`, `lcsc-order.csv`, `layout.py` updated. Verified
+  against datasheets: AP63205, 74AHCT1G125, WS2812B, NodeMCU 38-pin order,
+  BTT TMC2209 V1.3 (UART on pin 4), ALPS EC35A footprint, TEPT4400.
+  Not changed (rev B ideas): 22 µF 1206/25 V output caps, series resistors
+  on SDA/SCL at the RJ45, unidirectional TVS symbol for D2 (board is right:
+  band to pad 1). Nothing committed.
+- **2026-11-15 (3)** — User found the volcano silhouettes too cartoony and
+  asked for realistic ones and a nicer logo. New `tools/pcb_silk/emblem.py`
+  renders the four volcanoes from the Copernicus GLO-90 elevation model
+  (true profiles and snow lines, 3.3x vertical exaggeration, placed close
+  together), as a line engraving: solid lit snow, lined sky with
+  Villarrica's plume, dark forest, lake with ripples; frame, "ANDES MADE"
+  in Lato Bold between rules, names below. Output `emblem.json` (polygons),
+  drawn by `silk.py --emblem`, which replaces only the drawings inside the
+  emblem box (old emblem: 45 drawings; reference texts untouched). Lines
+  and gaps ≥ 0.16 mm. DRC unchanged (4 intended warnings, 0 unconnected,
+  parity clean). Only `F_Silkscreen.gto` changed in the gerbers; zip and
+  prints exported again. Nothing committed.

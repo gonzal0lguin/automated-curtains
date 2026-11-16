@@ -3,7 +3,8 @@
 
 Run with KiCad's Python, KiCad closed, after place.py and route.py:
 
-    python3 tools/pcb_silk/silk.py
+    python3 tools/pcb_silk/silk.py            # everything below
+    python3 tools/pcb_silk/silk.py --emblem   # only redraw the front emblem
 
 What it does (it can be run again at any time, the result is the same):
 
@@ -21,6 +22,7 @@ not on a via hole, inside the board edge.
 
 Coordinates: KiCad board mm, front view, Y down.
 """
+import json
 import math
 import sys
 from pathlib import Path
@@ -51,42 +53,12 @@ VALUE_AS_NAME = ("TP1", "TP2", "TP3", "TP4", "TP5")
 ART_VOLCANO = (141.0, 48.2, 191.0, 64.8)
 ART_FLAG = (187.9, 87.4, 207.1, 105.2)
 
-# Volcano emblem ("Andes made"): a sky of horizontal bands, heavy at the
-# horizon and thin at the top, with the four volcanoes cut out of it as dark
-# silhouettes and their snow caps printed solid.
-# Per volcano, north to south: name, summit height (m), axis x, profile:
-#   hw: half width at the base, left and right (mm)
-#   top: summit points left to right (mm from the axis, fraction of height)
-#   p: flank exponent left, right (larger = more concave)
-#   bumps: shoulders on a flank (side, position 0 base..1 summit, width, mm)
-#   snow: snow line (fraction of height)
-VOLCANOES = [
-    ("Lonquimay", 2865, 151.3, dict(
-        hw=(6.6, 7.4), p=(1.45, 1.55), snow=0.60,
-        top=[(-0.95, 0.985), (-0.55, 1.0), (-0.1, 0.955), (0.4, 0.97), (0.85, 0.995)],
-        bumps=[("r", 0.30, 0.07, 0.38), ("l", 0.55, 0.12, 0.12)])),
-    ("Llaima", 3125, 161.8, dict(
-        hw=(7.6, 8.6), p=(1.6, 1.5), snow=0.56,
-        top=[(-0.75, 0.99), (-0.35, 1.0), (0.05, 0.985), (0.9, 0.87), (1.6, 0.845),
-             (2.2, 0.90), (2.65, 0.915), (3.0, 0.90)],
-        bumps=[("l", 0.42, 0.10, 0.16), ("r", 0.50, 0.10, 0.14)])),
-    ("Villarrica", 2847, 172.6, dict(
-        hw=(7.6, 7.2), p=(1.7, 1.75), snow=0.52, smoke=True,
-        top=[(-0.45, 0.99), (-0.2, 1.0), (0.05, 0.965), (0.3, 0.995), (0.5, 0.985)],
-        bumps=[("l", 0.33, 0.09, 0.15), ("r", 0.62, 0.08, 0.10)])),
-    ("Osorno", 2652, 182.4, dict(
-        hw=(6.6, 6.4), p=(2.0, 2.05), snow=0.44,
-        top=[(-0.22, 0.975), (-0.05, 1.0), (0.12, 0.99), (0.26, 0.97)],
-        bumps=[("r", 0.22, 0.08, 0.10)])),
-]
-# Emblem outline, corner radius below. The top edge clears the pads of Q1.
-VOLC_FRAME = (142.5, 48.4, 189.5, 59.8)
-VOLC_R = 1.2
-VOLC_BASE_Y = 59.0          # ground line; solid band from here to the frame
-VOLC_SCALE = 8.0 / 3125     # mm per metre of summit height
-VOLC_BANDS = 10             # sky bands
-VOLC_BAND = (0.82, 0.18)    # band thickness at the horizon, at the top (mm)
-VOLC_HALO = 0.25            # clear gap between the sky bands and the rest
+# Volcano emblem ("Andes made"): Lonquimay, Llaima, Villarrica and Osorno
+# rendered from real elevation data as a line engraving, with its frame and
+# title. emblem.py makes it (own Python environment, see there) and writes
+# the polygons to emblem.json; this script only draws them. Everything lies
+# inside ART_VOLCANO.
+EMBLEM = Path(__file__).resolve().parent / "emblem.json"
 
 # Fixed labels: (text, x, y, height, angle, side[, stroke]).
 LABELS = [
@@ -95,8 +67,8 @@ LABELS = [
     ("DO NOT UNPLUG", 109.5, 62.6, 0.8, 0, B),
     ("WHILE POWERED", 109.5, 64.1, 0.8, 0, B),
     # spare I2C header, pin names under the pins
-    ("3V3", 122.75, 49.3, 0.8, 0, B, 0.12), ("GND", 125.25, 49.3, 0.8, 0, B, 0.12),
-    ("SDA", 127.75, 49.3, 0.8, 0, B, 0.12), ("SCL", 130.25, 49.3, 0.8, 0, B, 0.12),
+    ("3V3", 122.75, 49.3, 0.8, 0, B, 0.15), ("GND", 125.25, 49.3, 0.8, 0, B, 0.15),
+    ("SDA", 127.75, 49.3, 0.8, 0, B, 0.15), ("SCL", 130.25, 49.3, 0.8, 0, B, 0.15),
     # LCD connector: wire order above the opening (pin 1 = BLK)
     ("BLK", 143.0, 123.4, 0.8, 90, B), ("CS", 145.0, 123.75, 0.8, 90, B),
     ("DC", 147.0, 123.75, 0.8, 90, B), ("RES", 149.0, 123.4, 0.8, 90, B),
@@ -310,7 +282,7 @@ class Pen:
         for i in range(ps.OutlineCount()):
             o = ps.Outline(i)
             pts = [o.CPoint(j) for j in range(o.PointCount())]
-            if len(pts) < 3 or abs(o.Area()) < mm(0.4) * mm(0.4):   # slivers
+            if len(pts) < 3 or abs(o.Area()) < mm(0.15) * mm(0.15):   # specks
                 continue
             s = pcbnew.PCB_SHAPE(self.board, pcbnew.SHAPE_T_POLY)
             s.SetPolyPoints(pcbnew.VECTOR_VECTOR2I(pts))
@@ -381,108 +353,35 @@ def draw_flag(pen):
     pen.text("by Gonz", x0 + w / 2, y1 + 3.6, 1.0)
 
 
-def polyset(pts):
-    ps = pcbnew.SHAPE_POLY_SET()
-    ps.NewOutline()
-    for x, y in pts:
-        ps.Append(mm(x), mm(y))
-    return ps
-
-
-def grown(ps, d):
-    out = pcbnew.SHAPE_POLY_SET(ps)
-    out.Inflate(mm(d), pcbnew.CORNER_STRATEGY_ROUND_ALL_CORNERS, mm(0.01))
-    return out
-
-
-def disc(x, y, r, n=28):
-    return polyset([(x + r * math.cos(2 * math.pi * i / n),
-                     y + r * math.sin(2 * math.pi * i / n)) for i in range(n)])
-
-
-def round_rect(x0, y0, x1, y1, r, n=8):
-    pts = []
-    for cx, cy, a0 in ((x1 - r, y0 + r, -90), (x1 - r, y1 - r, 0),
-                       (x0 + r, y1 - r, 90), (x0 + r, y0 + r, 180)):
-        for i in range(n + 1):
-            a = math.radians(a0 + 90 * i / n)
-            pts.append((cx + r * math.cos(a), cy + r * math.sin(a)))
-    return polyset(pts)
-
-
-def volcano_profile(ax, h, spec):
-    """Skyline of one volcano in board mm, left base to right base."""
-    top = [(dx, f * h) for dx, f in spec["top"]]
-    n = 40
-
-    def flank(side, hw, p, edge):
-        ex, ey = edge
-        pts = []
-        for i in range(n):
-            t = i / n                              # 0 at the base, 1 at the summit
-            y = ey * t ** p
-            for bs, tc, wd, amp in spec.get("bumps", ()):
-                if bs == side:
-                    y += amp * math.exp(-((t - tc) / wd) ** 2)
-            x = (-hw + (ex + hw) * t) if side == "l" else (hw - (hw - ex) * t)
-            pts.append((x, y))
-        return pts
-
-    left = flank("l", spec["hw"][0], spec["p"][0], top[0])
-    right = flank("r", spec["hw"][1], spec["p"][1], top[-1])
-    return [(ax + x, VOLC_BASE_Y - y) for x, y in left + top + right[::-1]]
-
-
-def snow_cap(prof, ax, h, spec):
-    """Snow cap: the summit above an uneven snow line with glacier tongues."""
-    level = VOLC_BASE_Y - spec["snow"] * h
-    xs = [x for x, y in prof if y <= level]
-    xl, xr = min(xs) - 0.4, max(xs) + 0.4
-    # depth of each tooth below (+) / above (-) the snow line, fraction of h
-    teeth = (0.10, -0.07, 0.17, -0.04, 0.09, -0.09, 0.21, -0.05, 0.12, -0.08, 0.15)
-    edge = [(xl + (xr - xl) * i / (len(teeth) - 1), level + d * h)
-            for i, d in enumerate(teeth)]
-    above = polyset([(xl, VOLC_FRAME[1] - 2), (xr, VOLC_FRAME[1] - 2)] + edge[::-1])
-    cap = polyset(prof + [(prof[-1][0], VOLC_BASE_Y + 1), (prof[0][0], VOLC_BASE_Y + 1)])
-    cap.BooleanIntersection(above)
-    return cap
-
-
-def draw_volcanoes(pen):
-    fx0, fy0, fx1, fy1 = VOLC_FRAME
-    frame = round_rect(fx0, fy0, fx1, fy1, VOLC_R)
-    mountains = pcbnew.SHAPE_POLY_SET()
-    white = pcbnew.SHAPE_POLY_SET()                # snow and smoke
-    for name, height, ax, spec in VOLCANOES:
-        h = height * VOLC_SCALE
-        prof = volcano_profile(ax, h, spec)
-        mountains.BooleanAdd(polyset(
-            prof + [(prof[-1][0], VOLC_BASE_Y), (prof[0][0], VOLC_BASE_Y)]))
-        white.BooleanAdd(snow_cap(prof, ax, h, spec))
-        if spec.get("smoke"):                      # plume drifting downwind
-            top = VOLC_BASE_Y - h
-            for dx, dy, r in ((0.15, 0.75, 0.3), (0.6, 1.15, 0.38), (1.2, 1.5, 0.48),
-                              (1.95, 1.75, 0.58), (2.85, 1.9, 0.66), (3.85, 1.95, 0.6),
-                              (4.75, 1.9, 0.48), (5.5, 1.8, 0.34)):
-                white.BooleanAdd(disc(ax + dx, top - dy, r))
-    # sky: bands inside the frame, minus the mountains and a halo round the white
-    sky = pcbnew.SHAPE_POLY_SET()
-    pitch = (VOLC_BASE_Y - 0.3 - fy0) / VOLC_BANDS
-    for i in range(VOLC_BANDS):
-        t = VOLC_BAND[0] + (VOLC_BAND[1] - VOLC_BAND[0]) * i / (VOLC_BANDS - 1)
-        yb = VOLC_BASE_Y - 0.3 - i * pitch
-        sky.BooleanAdd(polyset([(fx0, yb - t), (fx1, yb - t), (fx1, yb), (fx0, yb)]))
-    sky.BooleanIntersection(frame)
-    solid = pcbnew.SHAPE_POLY_SET(mountains)
-    solid.BooleanAdd(white)
-    sky.BooleanSubtract(grown(solid, VOLC_HALO))
-    ground = polyset([(fx0, VOLC_BASE_Y), (fx1, VOLC_BASE_Y), (fx1, fy1), (fx0, fy1)])
-    ground.BooleanIntersection(frame)
-    for ps in (sky, white, ground):
+def draw_emblem(pen):
+    """Filled polygons (outline + holes) from emblem.json."""
+    polys = json.loads(EMBLEM.read_text())["polys"]
+    for poly in polys:
+        ps = pcbnew.SHAPE_POLY_SET()
+        ps.NewOutline()
+        for x, y in poly[0]:
+            ps.Append(mm(x), mm(y))
+        for hole in poly[1:]:
+            h = ps.NewHole()
+            for x, y in hole:
+                ps.Append(mm(x), mm(y), -1, h)
+        ps.Simplify()                       # normalise winding, merge touching
         pen.fill_set(ps)
-    xc = (fx0 + fx1) / 2
-    pen.text("A N D E S   M A D E", xc, fy1 + 2.0, 1.7, 0.3)
-    pen.text(" \u00b7 ".join(v[0].upper() for v in VOLCANOES), xc, fy1 + 4.2, 0.8, 0.15)
+    return len(polys)
+
+
+def remove_emblem(board):
+    """Delete the front silkscreen drawings that lie inside ART_VOLCANO."""
+    x0, y0, x1, y1 = ART_VOLCANO
+    n = 0
+    for d in list(board.GetDrawings()):
+        if d.GetLayer() != SILK[F]:
+            continue
+        bx0, by0, bx1, by1 = box_mm(d.GetBoundingBox())
+        if bx0 >= x0 and by0 >= y0 and bx1 <= x1 and by1 <= y1:
+            board.Delete(d)
+            n += 1
+    return n
 
 
 # ------------------------------------------------------- footprint clean-up
@@ -694,6 +593,13 @@ def check_labels(board, obs):
 
 def main():
     board = pcbnew.LoadBoard(str(BOARD))
+    if "--emblem" in sys.argv[1:]:
+        # only the front emblem: everything else on the board stays as it is
+        n = remove_emblem(board)
+        m = draw_emblem(Pen(board, F))
+        board.Save(str(BOARD))
+        print("emblem: %d old drawings removed, %d polygons drawn" % (n, m))
+        return
     for d in list(board.GetDrawings()):
         if d.GetLayer() in SILK.values():
             board.Delete(d)
@@ -701,7 +607,7 @@ def main():
         fp.BuildCourtyardCaches()
 
     front = Pen(board, F)
-    draw_volcanoes(front)
+    draw_emblem(front)
     draw_flag(front)
     for text, x, y, h, angle, side, *t in LABELS:
         Pen(board, side).text(text, x, y, h, t[0] if t else None, angle)

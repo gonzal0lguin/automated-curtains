@@ -9652,7 +9652,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "RJ45 no magnetics"
+		(property "Value" "RJ45 54602-908LF (no magnetics)"
 			(at 380 124.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9696,7 +9696,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C2683359"
+		(property "LCSC" "C2847314"
 			(at 386.08 104.14 0)
 			(hide yes)
 			(show_name no)
@@ -10241,6 +10241,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 279.4 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17414"
+			(at 281.94 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -13032,7 +13043,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "B5819W"
+		(property "Value" "DSK34"
 			(at 24.34 175.42 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -13076,7 +13087,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C8598"
+		(property "LCSC" "C727076"
 			(at 27.94 172.72 0)
 			(hide yes)
 			(show_name no)
@@ -13244,6 +13255,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C17414"
+			(at 214.84 157.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "fc9a679c-2f07-5348-9d18-968f610a094c")
 		)
@@ -13316,6 +13338,17 @@
 		)
 		(property "Description" "Light emitting diode"
 			(at 279.4 43.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2297"
+			(at 281.94 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -14000,6 +14033,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C17414"
+			(at 228.6 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "ffba1e75-4b99-5afb-9c3a-735e470e64da")
 		)
@@ -14256,6 +14300,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 218.44 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17414"
+			(at 214.84 182.82 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -14688,6 +14743,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C17414"
+			(at 228.6 179.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "51fbdb64-d567-56ab-a7f9-8a63c8ad4012")
 		)
@@ -15004,6 +15070,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 299.72 43.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17560"
+			(at 302.26 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17409,7 +17486,7 @@
 				)
 			)
 		)
-		(property "Value" "DC-005 5.5x2.1"
+		(property "Value" "DC005-T20 5.5x2.0 3A"
 			(at 25.4 45.72 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17452,7 +17529,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C16214"
+		(property "LCSC" "C111567"
 			(at 25.4 40.64 0)
 			(hide yes)
 			(show_name no)
@@ -17873,6 +17950,17 @@
 		)
 		(property "Description" "Push button switch, generic, two pins"
 			(at 27.94 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C285519"
+			(at 29.21 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -18650,6 +18738,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C285519"
+			(at 29.21 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "2c100aeb-56ab-53ac-88b8-ab0dad094c77")
 		)
@@ -19292,6 +19391,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 180.34 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17414"
+			(at 182.88 163.83 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -20886,6 +20996,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C17414"
+			(at 254 123.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "422c231c-7097-53d3-a5ea-a05cac45ce1b")
 		)
@@ -21195,6 +21316,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C17414"
+			(at 25.4 262.89 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "da49215e-920a-5f8e-82e0-79fb12a07e8e")
 		)
@@ -21267,6 +21399,17 @@
 		)
 		(property "Description" "Light emitting diode"
 			(at 261.62 43.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2295"
+			(at 264.16 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -21433,6 +21576,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C17408"
+			(at 62.44 233.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "e664d7c5-f681-596c-9f4f-fde32eb2e883")
 		)
@@ -21505,6 +21659,17 @@
 		)
 		(property "Description" "Resistor"
 			(at 294.64 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17414"
+			(at 297.18 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -23461,7 +23626,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C265121"
 			(at 322.58 167.64 0)
 			(hide yes)
 			(show_name no)

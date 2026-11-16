@@ -14,7 +14,7 @@ R0805 = 'Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder'
 C0805 = 'Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder'
 C1206 = 'Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder'
 LED0805 = 'LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder'
-RL = {'100R': '', '1k': 'C17513', '4.7k': 'C17673', '10k': '', '22k': '', '100k': 'C149504'}
+RL = {'100R': 'C17408', '1k': 'C17513', '4.7k': 'C17673', '10k': 'C17414', '22k': 'C17560', '100k': 'C149504'}
 CL = {'100nF': 'C38141', '10nF': 'C1710', '22uF': 'C98190', '10uF': 'C13585'}
 CFP = {'100nF': C0805, '10nF': C0805, '22uF': C0805, '10uF': C1206}
 CVAL = {'100nF': '100nF 50V', '10nF': '10nF 50V', '22uF': '22uF 16V', '10uF': '10uF 50V'}
@@ -42,8 +42,8 @@ def C(ref, val, x, y, n1, n2='GND', horiz=False, **kw):
 
 # ============ 1. POWER INPUT ============
 s.box(12, 16, 112, 70, '1 · POWER INPUT  12 V DC')
-s.add('J1', 'Connector:Barrel_Jack_Switch', 'DC-005 5.5x2.1', 'Connector_BarrelJack:BarrelJack_Horizontal',
-      25.4, 40.64, 0, {1: '~VIN_JACK', 2: '~GND', 3: '~GND'}, 'C16214')
+s.add('J1', 'Connector:Barrel_Jack_Switch', 'DC005-T20 5.5x2.0 3A', 'Connector_BarrelJack:BarrelJack_Horizontal',
+      25.4, 40.64, 0, {1: '~VIN_JACK', 2: '~GND', 3: '~GND'}, 'C111567')
 H('F1', 'Device:Polyfuse', '2A 33V PTC', 'Fuse:Fuse_1812_4532Metric_Pad1.30x3.40mm_HandSolder',
   53.34, 38.1, '~VIN_JACK', '~VIN_FUSED', 'C18198343')
 H('D1', 'Device:D_Schottky', 'SS54', 'Diode_SMD:D_SMA_Handsoldering', 76.2, 38.1, '~VIN_FUSED', '~+12V', 'C7420369', rot=180)
@@ -82,9 +82,9 @@ s.text('Fixed 5 V output: FB goes straight to the output. EN tied to VIN = alway
 X3 = 17.78
 s.box(254, 16, 334, 70, '3 · POWER LEDS + 12 V SENSE')
 R('R1', '4.7k', 243.84 + X3, 33.02, '+12V', '~$LED12'); s.wire('R1.2', (243.84 + X3, 39.37))
-V('D3', 'Device:LED', 'Red 12V', LED0805, 243.84 + X3, 43.18, '~$LED12', 'GND', rot=90)
+V('D3', 'Device:LED', 'Red 12V', LED0805, 243.84 + X3, 43.18, '~$LED12', 'GND', 'C2295', rot=90)
 R('R2', '1k', 261.62 + X3, 33.02, '+5V', '~$LED5'); s.wire('R2.2', (261.62 + X3, 39.37))
-V('D4', 'Device:LED', 'Green 5V', LED0805, 261.62 + X3, 43.18, '~$LED5', 'GND', rot=90)
+V('D4', 'Device:LED', 'Green 5V', LED0805, 261.62 + X3, 43.18, '~$LED5', 'GND', 'C2297', rot=90)
 R('R3', '100k', 281.94 + X3, 30.48, '+12V', '~VSENSE')
 R('R4', '22k', 281.94 + X3, 43.18, '~VSENSE', 'GND')
 C('C7', '100nF', 294.64 + X3, 43.18, '~VSENSE')
@@ -117,10 +117,10 @@ s.add('U2', 'blinds:ESP32_NODEMCU', 'ESP32 NodeMCU 38-pin', 'blinds:ESP32_NODEMC
     'J4_1': ('GND', 7.62), 'J4_7': ('GND', 12.7), 'J5_6': ('GND', 17.78)}, stub=7.62,
     extra={'Sockets': '2x 1x19 female header 2.54 mm (LCSC C2932678)'})
 s.add('SW2', 'Switch:SW_Push', 'RESET', 'Button_Switch_THT:SW_Tactile_SPST_Angled_PTS645Vx31-2LFS',
-      27.94, 96.52, 0, {1: 'GND', 2: 'ESP_EN'})
+      27.94, 96.52, 0, {1: 'GND', 2: 'ESP_EN'}, 'C285519')
 s.add('SW3', 'Switch:SW_Push', 'BOOT', 'Button_Switch_THT:SW_Tactile_SPST_Angled_PTS645Vx31-2LFS',
-      27.94, 114.3, 0, {1: 'GND', 2: 'BOOT'})
-H('D5', 'Device:D_Schottky', 'B5819W', 'Diode_SMD:D_SOD-123', 27.94, 172.72, '+5V', '~5V_MCU', 'C8598', rot=180)
+      27.94, 114.3, 0, {1: 'GND', 2: 'BOOT'}, 'C285519')
+H('D5', 'Device:D_Schottky', 'DSK34', 'Diode_SMD:D_SOD-123', 27.94, 172.72, '+5V', '~5V_MCU', 'C727076', rot=180)
 s.wire('D5.1', (55.88, 172.72)); s.label('5V_MCU', 55.88, 172.72); s.flag(45.72, 172.72)
 C('C8', '10uF', 35.56, 180.34, '~5V_MCU'); s.wire((35.56, 172.72), 'C8.1')
 C('C9', '100nF', 50.8, 180.34, '~5V_MCU'); s.wire((50.8, 172.72), 'C9.1')
@@ -146,9 +146,9 @@ s.text('MS1 = MS2 = GND: UART address 0.\nR6 keeps the driver off until\nthe fir
 
 # ============ 7. MOTOR + ENCODER LINK ============
 s.box(270, 74, 408, 138, '7 · MOTOR + ENCODER LINK (RJ45)  -  NOT ETHERNET')
-s.add('J2', 'Connector:RJ45', 'RJ45 no magnetics', 'Connector_RJ:RJ45_Amphenol_54602-x08_Horizontal', 386.08, 104.14, 180, {
+s.add('J2', 'Connector:RJ45', 'RJ45 54602-908LF (no magnetics)', 'Connector_RJ:RJ45_Amphenol_54602-x08_Horizontal', 386.08, 104.14, 180, {
     1: 'MOT_A1', 2: 'MOT_A2', 3: 'MOT_B1', 4: 'SDA', 5: ('GND', 17.78), 6: 'MOT_B2', 7: 'SCL', 8: ('+3V3', 25.4)},
-    'C2683359', refpos=(380, 121.9), valpos=(380, 124.5))
+    'C2847314', refpos=(380, 121.9), valpos=(380, 124.5))
 R('R7', '10k', 279.4, 96.52, '+3V3', 'SDA')
 R('R8', '10k', 294.64, 96.52, '+3V3', 'SCL')
 C('C14', '100nF', 309.88, 96.52, '+3V3')
@@ -179,7 +179,7 @@ s.wire('SW4.2', (190.5, 172.72)); s.label('KNOB_SW', 190.5, 172.72)
 # ============ 9. LCD ============
 s.box(270, 142, 340, 204, '9 · LCD  (GC9A01, JST-PH SMD)')
 s.add('J4', 'Connector_Generic:Conn_01x08', 'LCD GC9A01', 'Connector_JST:JST_PH_S8B-PH-SM4-TB_1x08-1MP_P2.00mm_Horizontal', 322.58, 167.64, 0, {
-    1: 'TFT_BL', 2: 'TFT_CS', 3: 'TFT_DC', 4: 'TFT_RST', 5: 'TFT_MOSI', 6: 'TFT_SCLK', 7: ('+3V3', 20.32), 8: 'GND'}, '', refpos=(320.04, 157.48), valpos=(320.04, 182.88))
+    1: 'TFT_BL', 2: 'TFT_CS', 3: 'TFT_DC', 4: 'TFT_RST', 5: 'TFT_MOSI', 6: 'TFT_SCLK', 7: ('+3V3', 20.32), 8: 'GND'}, 'C265121', refpos=(320.04, 157.48), valpos=(320.04, 182.88))
 C('C18', '10uF', 279.4, 190.5, '+3V3')
 C('C19', '100nF', 299.72, 190.5, '+3V3')
 s.text('Same order as the module:\nBLK CS DC RES SDA SCL VIN GND', 273, 150)
