@@ -1,0 +1,11 @@
+LCSC Part Number,Manufacturer Part Number,Qty per board,Suggested order qty,Refs,Description,Note
+C79815,AS5600-ASOM,1,3,U1,Magnetic angle sensor 12-bit I2C SOIC-8,Low LCSC stock (7 on 2026-11-17); also at Mouser / Digi-Key. Not the AS5600L (other I2C address)
+C2847314,54602-908LF,1,2,J1,RJ45 8P8C horizontal unshielded no magnetics (Amphenol),Same jack as the panel J2
+C144395,B4B-XH-A(LF)(SN),1,2,J2,JST-XH 4-pin vertical header 2.5 mm,Motor cable
+C55440,PESD3V3L2BT,1,3,D2,ESD protection 2 lines 3.3 V SOT-23,
+C17673,0805W8F4701T5E,2,10,"R1, R2",Resistor 4.7k 0805,I2C pull-ups
+C17513,0805W8F1001T5E,1,5,R3,Resistor 1k 0805,LED
+C38141,0805B104K500NT,1,10,C1,Capacitor 100nF 50V X7R 0805,
+C28323,CL21B105KBFNNNE,1,5,C2,Capacitor 1uF 50V X7R 0805,
+C92009,0805B106K250NT,1,5,C3,Capacitor 10uF 25V X7R 0805,
+C2297,KT-0805G,1,5,D1,LED green 0805,
