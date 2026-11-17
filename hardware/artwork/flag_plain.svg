@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="7.400mm" height="9.100mm" viewBox="-0.1000 -0.1000 7.4000 9.1000">
+<title>Flag of Chile</title>
+<g fill="#000" stroke="#000" stroke-linecap="round">
+  <line x1="0.0000" y1="0.0000" x2="7.2000" y2="0.0000" stroke-width="0.180"/>
+  <line x1="7.2000" y1="0.0000" x2="7.2000" y2="4.8000" stroke-width="0.180"/>
+  <line x1="7.2000" y1="4.8000" x2="0.0000" y2="4.8000" stroke-width="0.180"/>
+  <line x1="0.0000" y1="4.8000" x2="0.0000" y2="0.0000" stroke-width="0.180"/>
+  <polygon points="2.4000,0.0000 7.2000,0.0000 7.2000,2.4000 2.4000,2.4000" stroke="none"/>
+  <line x1="0.0000" y1="2.4000" x2="2.4000" y2="2.4000" stroke-width="0.150"/>
+  <polygon points="1.2000,0.6000 1.3347,1.0146 1.7706,1.0146 1.4180,1.2708 1.5527,1.6854 1.2000,1.4292 0.8473,1.6854 0.9820,1.2708 0.6294,1.0146 1.0653,1.0146" stroke="none"/>
+  <line x1="2.4000" y1="0.0000" x2="2.4000" y2="2.4000" stroke-width="0.150"/>
+  <text x="3.6000" y="6.0000" font-size="1.111" stroke="none" text-anchor="middle" dominant-baseline="central" font-family="DejaVu Sans, Arial, sans-serif">Designed</text>
+  <text x="3.6000" y="7.2000" font-size="1.111" stroke="none" text-anchor="middle" dominant-baseline="central" font-family="DejaVu Sans, Arial, sans-serif">in Chile</text>
+  <text x="3.6000" y="8.4000" font-size="1.111" stroke="none" text-anchor="middle" dominant-baseline="central" font-family="DejaVu Sans, Arial, sans-serif">by Gonz</text>
+</g>
+</svg>

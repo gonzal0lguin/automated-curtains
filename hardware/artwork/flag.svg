@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="7.400mm" height="9.100mm" viewBox="-0.1000 -0.1000 7.4000 9.1000">
+<title>Flag of Chile</title>
+<g fill="#000" stroke="#000" stroke-linecap="round">
+  <line x1="0.0000" y1="0.0000" x2="7.2000" y2="0.0000" stroke-width="0.180"/>
+  <line x1="7.2000" y1="0.0000" x2="7.2000" y2="4.8000" stroke-width="0.180"/>
+  <line x1="7.2000" y1="4.8000" x2="0.0000" y2="4.8000" stroke-width="0.180"/>
+  <line x1="0.0000" y1="4.8000" x2="0.0000" y2="0.0000" stroke-width="0.180"/>
+  <polygon points="2.4000,0.0000 7.2000,0.0000 7.2000,2.4000 2.4000,2.4000" stroke="none"/>
+  <line x1="0.0000" y1="2.4000" x2="2.4000" y2="2.4000" stroke-width="0.150"/>
+  <polygon points="1.2000,0.6000 1.3347,1.0146 1.7706,1.0146 1.4180,1.2708 1.5527,1.6854 1.2000,1.4292 0.8473,1.6854 0.9820,1.2708 0.6294,1.0146 1.0653,1.0146" stroke="none"/>
+  <line x1="0.0000" y1="0.4800" x2="0.6600" y2="0.4800" stroke-width="0.150"/>
+  <line x1="1.7400" y1="0.4800" x2="2.4000" y2="0.4800" stroke-width="0.150"/>
+  <line x1="0.0000" y1="0.9600" x2="0.3326" y2="0.9600" stroke-width="0.150"/>
+  <line x1="2.0674" y1="0.9600" x2="2.4000" y2="0.9600" stroke-width="0.150"/>
+  <line x1="0.0000" y1="1.4400" x2="0.3326" y2="1.4400" stroke-width="0.150"/>
+  <line x1="2.0674" y1="1.4400" x2="2.4000" y2="1.4400" stroke-width="0.150"/>
+  <line x1="0.0000" y1="1.9200" x2="0.6600" y2="1.9200" stroke-width="0.150"/>
+  <line x1="1.7400" y1="1.9200" x2="2.4000" y2="1.9200" stroke-width="0.150"/>
+  <line x1="0.4500" y1="2.4000" x2="0.4500" y2="4.8000" stroke-width="0.150"/>
+  <line x1="0.9000" y1="2.4000" x2="0.9000" y2="4.8000" stroke-width="0.150"/>
+  <line x1="1.3500" y1="2.4000" x2="1.3500" y2="4.8000" stroke-width="0.150"/>
+  <line x1="1.8000" y1="2.4000" x2="1.8000" y2="4.8000" stroke-width="0.150"/>
+  <line x1="2.2500" y1="2.4000" x2="2.2500" y2="4.8000" stroke-width="0.150"/>
+  <line x1="2.7000" y1="2.4000" x2="2.7000" y2="4.8000" stroke-width="0.150"/>
+  <line x1="3.1500" y1="2.4000" x2="3.1500" y2="4.8000" stroke-width="0.150"/>
+  <line x1="3.6000" y1="2.4000" x2="3.6000" y2="4.8000" stroke-width="0.150"/>
+  <line x1="4.0500" y1="2.4000" x2="4.0500" y2="4.8000" stroke-width="0.150"/>
+  <line x1="4.5000" y1="2.4000" x2="4.5000" y2="4.8000" stroke-width="0.150"/>
+  <line x1="4.9500" y1="2.4000" x2="4.9500" y2="4.8000" stroke-width="0.150"/>
+  <line x1="5.4000" y1="2.4000" x2="5.4000" y2="4.8000" stroke-width="0.150"/>
+  <line x1="5.8500" y1="2.4000" x2="5.8500" y2="4.8000" stroke-width="0.150"/>
+  <line x1="6.3000" y1="2.4000" x2="6.3000" y2="4.8000" stroke-width="0.150"/>
+  <line x1="6.7500" y1="2.4000" x2="6.7500" y2="4.8000" stroke-width="0.150"/>
+  <text x="3.6000" y="6.0000" font-size="1.111" stroke="none" text-anchor="middle" dominant-baseline="central" font-family="DejaVu Sans, Arial, sans-serif">Designed</text>
+  <text x="3.6000" y="7.2000" font-size="1.111" stroke="none" text-anchor="middle" dominant-baseline="central" font-family="DejaVu Sans, Arial, sans-serif">in Chile</text>
+  <text x="3.6000" y="8.4000" font-size="1.111" stroke="none" text-anchor="middle" dominant-baseline="central" font-family="DejaVu Sans, Arial, sans-serif">by Gonz</text>
+</g>
+</svg>
