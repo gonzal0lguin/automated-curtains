@@ -35,6 +35,7 @@ fabrication files and the order guide are in [`fab/`](fab/README.md).
 | [`tools/gen_schematic/`](tools/gen_schematic/) | Script that generated the schematic and checks its netlist. **Re-running it overwrites edits made in KiCad** |
 | `tools/pcb_placement/`, `tools/pcb_routing/`, `tools/pcb_silk/` | Placement, routing and silkscreen scripts. The board now has hand edits and review fixes: **do not re-run `place.py` or `route.py`** (see `doc/pcb-layout.md`) |
 | [`doc/Curtain control panel hardware design.pdf`](doc/Curtain%20control%20panel%20hardware%20design.pdf) | Earlier design study, including the press-the-screen mechanism |
+| [`../motor-pcb/README.md`](../motor-pcb/README.md) | Motor encoder board (AS5600 + RJ45 on the back of the NEMA 17) |
 | [`../../firmware/README.md`](../../firmware/README.md) | Firmware: build, flash, test firmwares, API |
 
 ## Opening the project

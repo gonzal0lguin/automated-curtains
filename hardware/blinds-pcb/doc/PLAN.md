@@ -353,3 +353,13 @@ the printed parts, gerbers + drill files.
   and gaps ≥ 0.16 mm. DRC unchanged (4 intended warnings, 0 unconnected,
   parity clean). Only `F_Silkscreen.gto` changed in the gerbers; zip and
   prints exported again. Nothing committed.
+- **2026-11-17** — New project `../motor-pcb` (motor encoder board, rev A):
+  42.3 mm square back plate for the NEMA 17 (M3 on the 31 mm pattern),
+  AS5600 on the shaft axis (motor side) with 100 nF + 1 µF and a DIR solder
+  jumper; RJ45 with the same pinout as J2, JST-XH 4-pin to the motor,
+  4.7k I2C pull-ups, PESD3V3L2BT ESD clamp, 10 µF, 3V3 LED, 3 test pads.
+  Made by scripts (`tools/gen_schematic.py`, `build_pcb.py`, `silk.py`,
+  `emblem_small.py`). ERC 0, DRC 0, parity clean, fab files in
+  `motor-pcb/fab/`. Small flag + volcano emblem regenerated from the DEM
+  (the panel's `emblem.json` was not in the repo). Logos also saved as SVG
+  in `../artwork/` (`export_svg.py`).
